@@ -4,11 +4,12 @@
 // PIN_STB // PB4 STB SPI1_MISO // SPI3_CS_SET  SPI3_CS_CLR
 // PIN_CLK // PB3 CLK SPI1_SCK  // SPI3_CLK_SET SPI3_CLK_CLR
 // PIN_DIO // PB5 DIO SPI1_MOSI // SPI3_DIO_SET SPI3_DIO_CLR
+// TODO: Makefile
 volatile uint32_t ttms   = 0; // системный тикер
-volatile uint32_t pa2    = 0; // для мигания
+volatile uint32_t pa2    = 0; // для blink
 volatile uint32_t pr10ms = 0; // счетчик для 10 мс
 volatile uint16_t key;        // кнопка tm1638
-
+volatile uint32_t ddms 	 = 0;
 #define pin_toggle(gpioport, gpios)  do{  \    // поноавились дефайны Eddy
         register uint32_t __port = gpioport->ODR;  \
         gpioport->BSRR = ((__port & (gpios)) << 16) | (~__port & (gpios));}while(0)
@@ -91,7 +92,6 @@ void process_10ms(void)
     processtm1638();
   }
 }
-
 
 int main() {
   rcc_sysclockinit();
