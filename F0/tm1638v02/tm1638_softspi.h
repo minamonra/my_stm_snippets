@@ -7,13 +7,13 @@
 #define DISP_COMMAND  0x80
 #define ADDR_COMMAND  0XC0
 
-#define SPI3_DIO_SET GPIOB->BSRR |= GPIO_BSRR_BS_5
-#define SPI3_DIO_CLR GPIOB->BSRR |= GPIO_BSRR_BR_5
-#define SPI3_CLK_SET GPIOB->BSRR |= GPIO_BSRR_BS_3
-#define SPI3_CLK_CLR GPIOB->BSRR |= GPIO_BSRR_BR_3
-#define SPI3_CS_SET  GPIOB->BSRR |= GPIO_BSRR_BS_4
-#define SPI3_CS_CLR  GPIOB->BSRR |= GPIO_BSRR_BR_4
-#define SPI3_CHECK_DIO pin_read(GPIOB, 1<<5)
+#define SPI3_DIO_SET   GPIOB->BSRR |= GPIO_BSRR_BS_5
+#define SPI3_DIO_CLR   GPIOB->BSRR |= GPIO_BSRR_BR_5
+#define SPI3_CLK_SET   GPIOB->BSRR |= GPIO_BSRR_BS_3
+#define SPI3_CLK_CLR   GPIOB->BSRR |= GPIO_BSRR_BR_3
+#define SPI3_CS_SET    GPIOB->BSRR |= GPIO_BSRR_BS_4
+#define SPI3_CS_CLR    GPIOB->BSRR |= GPIO_BSRR_BR_4
+#define SPI3_CHECK_DIO GPIOB->IDR & (1 << 5)
 
 void tm1638_write_byte(unsigned char data);
 unsigned char tm1638_read_byte(void);

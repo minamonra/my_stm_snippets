@@ -1,7 +1,11 @@
-#include "common.h"
 #include "tm1638_softspi.h"
 
-unsigned char code_tab[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};
+unsigned char code_tab[] =
+{
+    0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, // 0-7
+    0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, // 8-9, A-F
+    0x00
+};
 
 void tm1638_write_byte(unsigned char data) {
   unsigned char i;
@@ -79,8 +83,12 @@ void tm1638_init(void) {
     tm1638_write_byte(0x00);
   SPI3_CS_SET;
 }
+
 extern unsigned char num[8];
+
 void tm1638_tube_dip(uint16_t pos, uint16_t data) {
   tm1638_write_data(pos * 2, code_tab[data]);
   tm1638_write_led(1 << data);
 }
+
+// EOF
