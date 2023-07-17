@@ -13,11 +13,6 @@ volatile uint32_t pa2    = 0; // для мигания
 volatile uint32_t pr10ms = 0; // счетчик для 10 мс
 volatile uint16_t key;        // кнопка tm1638
 
-// понравились дефайны Eddy
-#define pin_toggle(gpioport, gpios)  do{  \
-        register uint32_t __port = gpioport->ODR;  \
-        gpioport->BSRR = ((__port & (gpios)) << 16) | (~__port & (gpios));}while(0)
-
 void gpio_init(void)
 {
   RCC->AHBENR  |= RCC_AHBENR_GPIOAEN  | RCC_AHBENR_GPIOBEN;
@@ -51,7 +46,7 @@ void blink_(uint16_t freq)
 {
   if (pa2 > ttms || ttms - pa2 > freq)
   {
-    pin_toggle(GPIOA, 1<<2);
+	GPIOA->ODR ^= 1<<2;
     pa2 = ttms;
   }
 }
