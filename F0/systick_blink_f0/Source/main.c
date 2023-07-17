@@ -12,7 +12,6 @@ volatile uint32_t pa2ms = 0; // системный тикер
 
 static void gpio_setup(void)
 {
-  RCC->AHBENR   |= RCC_AHBENR_GPIOAEN;   // GPIOA clock enable
   RCC->AHBENR   |= RCC_AHBENR_GPIOBEN;   // GPIOA clock enable
   GPIOA->MODER  |= GPIO_MODER_MODER2_0;  // PA3 output
 }
@@ -40,7 +39,6 @@ int main(void)
 void SysTick_Handler(void) 
 {
   ++ttms;
-  // if (ddms) ddms--;
 }
 
 // EOF
