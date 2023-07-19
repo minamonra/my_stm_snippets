@@ -104,18 +104,20 @@ void process_10ms(void)
   }
 }
 
-int main() {
+int main() 
+{
   rcc_sysclockinit();
   SysTick_Config(48000);
   gpio_init();
   tm1638_init();
 
-  do {
+  do 
+  {
 
     blink_(499);
     process_10ms();
 
-   } while (1);
+  } while (1);
 }
 
 void SysTick_Handler(void) 
