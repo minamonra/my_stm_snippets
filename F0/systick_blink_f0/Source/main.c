@@ -7,20 +7,20 @@
 // ./CMSIS/Device
 // ./CMSIS/Core
 
-volatile uint32_t ttms  = 0;
-volatile uint32_t pa2ms = 0; // системный тикер
+volatile uint32_t ttms  = 0; // системный тикер
+volatile uint32_t pa2ms = 0;
 
 static void gpio_setup(void)
 {
   RCC->AHBENR   |= RCC_AHBENR_GPIOBEN;   // GPIOA clock enable
-  GPIOA->MODER  |= GPIO_MODER_MODER2_0;  // PA3 output
+  GPIOA->MODER  |= GPIO_MODER_MODER2_0;  // PA2 output
 }
 
 void blink_(uint16_t freq)
 {
   if (pa2ms > ttms || ttms - pa2ms > freq)
   {
-    GPIOA->ODR ^= 1<<2;
+    GPIOA->ODR ^= (1<<2);
     pa2ms = ttms;
   }
 }
