@@ -9,6 +9,8 @@ volatile uint32_t pa2    = 0; // для мигания
 volatile uint32_t pr10ms = 0; // счетчик для 10 мс
 volatile uint16_t key;        // кнопка tm1638
 volatile uint16_t pr1s   = 0;
+// по биту на каждую цифру, далее, когда зажгли все (0b11111111)- очистили
+unsigned char  keypressed = 0b00000000;
 
 void gpio_init(void)
 {
@@ -41,35 +43,37 @@ void blink_(uint16_t freq)
   }
 }
 
+
+// 
 void processtm1638(void)
 {
 key = tm1638_read_key();
    if (key < 8) {
       while (tm1638_read_key() == key);
       if (key == 0) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 0);
       } else if (key == 1) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 1);
       } else if (key == 2) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 2);
       } else if (key == 3) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 3);
       } else if (key == 4) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 4);
       } else if (key == 5) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 5);
       } else if (key == 6) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 6);
       } else if (key == 7) {
-        // tm1638_write_data(7<<1,code_tab[key]);
         tm1638_tube_dip(key, key);
+        keypressed |= (1 << 7);
       }
     }
 }
@@ -93,8 +97,12 @@ void process_Xs(uint16_t freq)
 {
   if (pr1s > ttms || ttms - pr1s > freq)
   {
-    tm1638_clear();
     pr1s = ttms;
+    if (keypressed == 0b11111111)
+    { 
+      tm1638_clear();
+      keypressed = 0;
+    }
   }
 }
 
