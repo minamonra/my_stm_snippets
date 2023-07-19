@@ -5,6 +5,7 @@
 // Обмен с TM`кой каждые 10 мс
 // https://youtu.be/MRXQHX5MCf8
 volatile uint32_t ttms   = 0; // системный тикер
+volatile uint32_t ddms   = 0; // для "взвода" задержки
 volatile uint32_t pa2    = 0; // для мигания
 volatile uint32_t pr10ms = 0; // счетчик для 10 мс
 volatile uint16_t key;        // кнопка tm1638
@@ -43,8 +44,13 @@ void blink_(uint16_t freq)
   }
 }
 
+void systick_delayms(uint16_t ms)
+{
+  ddms = ms;
+  do {}
+  while (ddms);
+}
 
-// 
 void processtm1638(void)
 {
 key = tm1638_read_key();
@@ -100,6 +106,7 @@ void process_Xs(uint16_t freq)
     pr1s = ttms;
     if (keypressed == 0b11111111)
     { 
+      systick_delayms(1000);
       tm1638_clear();
       keypressed = 0;
     }
@@ -124,7 +131,7 @@ int main() {
 void SysTick_Handler(void) 
 {
   ++ttms;
-  // if (ddms) ddms--;
+  if (ddms) ddms--;
 }
 
 // EOF
