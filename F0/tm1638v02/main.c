@@ -9,7 +9,6 @@ volatile uint32_t ddms   = 0; // для "взвода" задержки
 volatile uint32_t pa2    = 0; // для мигания
 volatile uint32_t pr10ms = 0; // счетчик для 10 мс
 volatile uint16_t key;        // кнопка tm1638
-volatile uint16_t pr1s   = 0;
 // по биту на каждую цифру, далее, когда зажгли все (0b11111111)- очистили
 unsigned char  keypressed = 0b00000000;
 
@@ -39,7 +38,7 @@ void blink_(uint16_t freq)
 {
   if (pa2 > ttms || ttms - pa2 > freq)
   {
-    GPIOA->ODR ^= 1<<2;
+    GPIOA->ODR ^= (1<<2);
     pa2 = ttms;
   }
 }
@@ -47,50 +46,7 @@ void blink_(uint16_t freq)
 void systick_delayms(uint16_t ms)
 {
   ddms = ms;
-  do {}
-  while (ddms);
-}
-
-void processtm1638(void)
-{
-key = tm1638_read_key();
-   if (key < 8) {
-      while (tm1638_read_key() == key);
-      if (key == 0) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 0);
-      } else if (key == 1) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 1);
-      } else if (key == 2) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 2);
-      } else if (key == 3) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 3);
-      } else if (key == 4) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 4);
-      } else if (key == 5) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 5);
-      } else if (key == 6) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 6);
-      } else if (key == 7) {
-        tm1638_tube_dip(key, key);
-        keypressed |= (1 << 7);
-      }
-    }
-}
-
-void process_10ms(void)
-{
-  if (pr10ms > ttms || ttms - pr10ms > 10)
-  {
-    processtm1638();
-    pr10ms = ttms;
-  }
+  do {} while (ddms);
 }
 
 void tm1638_clear(void)
@@ -99,17 +55,52 @@ void tm1638_clear(void)
     tm1638_tube_dip(i, 16); // 16=0x00 (empty, clear)
 }
 
-void process_Xs(uint16_t freq)
+void processtm1638(void)
 {
-  if (pr1s > ttms || ttms - pr1s > freq)
-  {
-    pr1s = ttms;
-    if (keypressed == 0b11111111)
-    { 
-      systick_delayms(1000);
-      tm1638_clear();
-      keypressed = 0;
+  key = tm1638_read_key();
+  if (key < 8) {
+    while (tm1638_read_key() == key);
+    if (key == 0) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<0);
+    } else if (key == 1) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<1);
+    } else if (key == 2) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<2);
+    } else if (key == 3) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<3);
+    } else if (key == 4) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<4);
+    } else if (key == 5) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<5);
+    } else if (key == 6) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<6);
+    } else if (key == 7) {
+      tm1638_tube_dip(key, key);
+      keypressed |= (1<<7);
     }
+  }
+  if (keypressed == 0b11111111)
+  { 
+    systick_delayms(1000);
+    tm1638_clear();
+    keypressed   =  0b00000000;
+  }
+
+}
+
+void process_10ms(void)
+{
+  if (pr10ms > ttms || ttms - pr10ms > 10)
+  {
+    processtm1638();
+    pr10ms = ttms;
   }
 }
 
@@ -123,7 +114,6 @@ int main() {
 
     blink_(499);
     process_10ms();
-    process_Xs(3000); //
 
    } while (1);
 }
