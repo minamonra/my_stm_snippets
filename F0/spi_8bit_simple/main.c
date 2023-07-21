@@ -9,8 +9,8 @@
 //	PB4 - CS (chip select)
 //	PB5 - SPI1_MOSI (data)
 
-#define CS_SET    GPIOB->BSRR |= GPIO_BSRR_BS_4 // GPIOB->ODR &= ~GPIO_ODR_4;
-#define CS_CLR    GPIOB->BSRR |= GPIO_BSRR_BR_4 // GPIOB->ODR |= GPIO_ODR_4;
+#define CS_SET GPIOB->BSRR |= GPIO_BSRR_BS_4 // GPIOB->ODR &= ~GPIO_ODR_4;
+#define CS_CLR GPIOB->BSRR |= GPIO_BSRR_BR_4 // GPIOB->ODR |= GPIO_ODR_4;
 #define SPI1_DR_8bit  (*(__IO uint8_t *)((uint32_t)&(SPI1->DR)))
 
 volatile uint32_t ttms  = 0; // системный тикер
