@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "stm32f031x6.h"
+#include "stm32f0xx.h"
 
 // Segger -> Menu -> Project -> Options -> Preprocessor -> User include direcories
 // add this:
@@ -12,7 +12,7 @@ volatile uint32_t pa2ms = 0;
 
 static void gpio_setup(void)
 {
-  RCC->AHBENR   |= RCC_AHBENR_GPIOBEN;   // GPIOA clock enable
+  RCC->AHBENR   |= RCC_AHBENR_GPIOAEN;   // GPIOA clock enable
   GPIOA->MODER  |= GPIO_MODER_MODER2_0;  // PA2 output
 }
 
