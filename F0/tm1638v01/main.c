@@ -175,8 +175,9 @@ void WriteCmd(uint8_t cmd)
   CS_SET;
 }
 
-// Read buttons
-// 1F 17 0F 07 1B 13 0B 03
+// Read buttons, значения:
+// hex 1F 17 0F 07 1B 13 0B 03
+// dec 31 23 15 07 27 19 11 03
 uint8_t ReadKey(void)
 {
   uint8_t temp=32;
