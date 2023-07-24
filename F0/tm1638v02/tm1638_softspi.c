@@ -86,7 +86,8 @@ void tm1638_init(void) {
 
 extern unsigned char num[8];
 
-void tm1638_tube_dip(uint16_t pos, uint16_t data) {
+void tm1638_tube_dip(uint16_t pos, uint16_t data) 
+{
   tm1638_write_data(pos * 2, code_tab[data]);
   tm1638_write_led(1 << data);
 }
