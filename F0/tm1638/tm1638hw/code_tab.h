@@ -20,7 +20,7 @@ const unsigned char code_tab[] =
   0x79,    // E 0b01111001
   0x71,    // F 0b01110001
   0x40,    // - 0b01000000
-  0x00,     // nothing 0b00000000
+  0x00,    // nothing 0b00000000
   0x80     // dot 
 };
 

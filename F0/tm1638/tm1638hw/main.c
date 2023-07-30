@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stm32f0xx.h>
 #include "tm1638.h"
 
@@ -20,14 +18,13 @@ void blink_(uint16_t freq)
     GPIOA->ODR ^= (1<<2);
     pa2ms = ttms;
     
- tm1638_disp_4dec1(number);
+    tm1638_disp_4dec1(number);
     if (command == 1) number++;
     if (command == 2) number--;
-
     if (number > 9999) number = 0;
-    
-    tm1638_disp_4dec2(tm1638_get_key());
-    switch (tm1638_get_key())
+    uint8_t key = tm1638_get_key();
+    tm1638_disp_4dec2(key);
+    switch (key)
     {
       case (1<<0): command = 0; break; // стоп
       case (1<<1): command = 1; break; // счёт вверх

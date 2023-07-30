@@ -76,9 +76,9 @@ static void write_cmd(uint8_t cmd)
 
 static void write_data(uint8_t add, uint8_t data)
 {
-  write_cmd(0x44);
+  write_cmd(0x44); // 0x44 режим записи в фиксированный адрес
   CS_CLR;
-  spi_send_byte(0xc0 | add);
+  spi_send_byte(0xc0 | add); // адресация начинается с 0хс0
   spi_send_byte(data);
   CS_SET;
 }
@@ -96,7 +96,7 @@ void tm1638_write_led(uint8_t led_flag)
 
 void tm1638_seg(uint8_t seg_num, uint8_t data, uint8_t dot) // seg_num 0-7; ключить точку 1
 {
-  write_cmd(0x44);
+  write_cmd(0x44); 
   CS_CLR;
   spi_send_byte(0xc0 + seg_num * 2); // 0,2,4,6,8,10....
   spi_send_byte(code_tab[data] | (dot ? 0x80 : 0));
@@ -105,8 +105,8 @@ void tm1638_seg(uint8_t seg_num, uint8_t data, uint8_t dot) // seg_num 0-7; кл
 
 void tm1638_init(void)
 {
-  write_cmd(0x8E);
-  write_cmd(0x44);
+  write_cmd(0x8E); // 0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x8F уровни яркости и вкл
+  write_cmd(0x44); 
   CS_CLR;
   spi_send_byte(0xc0);
   for (uint8_t i = 0; i < 16; i++)
@@ -155,7 +155,7 @@ void tm1638_clear(uint8_t par)
 void tm1638_initc(uint8_t bright)
 {
   CS_CLR;
-  spi_send_byte(0x88 | bright); //0x88 включаем режим команд и сам дисплей
+  spi_send_byte(0x88 | bright); // 0x88 включаем режим команд и сам дисплей
   CS_SET;
   tm1638_clear(0);
 }
