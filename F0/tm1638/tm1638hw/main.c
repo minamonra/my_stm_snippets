@@ -20,11 +20,25 @@ void blink_(uint16_t freq)
     GPIOA->ODR ^= (1<<2);
     pa2ms = ttms;
     
-    tm1638_disp_4dec1(number);
-    number++;
-    if (number > 9999) number = 0;
-    tm1638_disp_4dec2(tm1638_get_key());
+ tm1638_disp_4dec1(number);
+    if (command == 1) number++;
+    if (command == 2) number--;
 
+    if (number > 9999) number = 0;
+    
+    tm1638_disp_4dec2(tm1638_get_key());
+    switch (tm1638_get_key())
+    {
+      case (1<<0): command = 0; break; // стоп
+      case (1<<1): command = 1; break; // счёт вверх
+      case (1<<2): command = 2; break; // счёт вниз
+      case (1<<3): break;
+      case (1<<4): break;
+      case (1<<5): break;
+      case (1<<6): break;
+      case (1<<7): break;
+      default:;
+    }
   }
 }
 
