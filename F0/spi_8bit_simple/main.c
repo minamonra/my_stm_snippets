@@ -39,6 +39,9 @@ static void spi_init(void)
 {
   RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
   // SPI configuration
+  //SPI1->CR1 &= ~SPI_CR1_LSBFIRST;         //MSB will be first
+  //SPI1->CR1 |= SPI_CR1_LSBFIRST; // !! Frame Format младшим битов вперед (little endian)
+  //SPI1->CR1 &= ~SPI_CR1_BIDIMODE; // выкл bi-directional mode (можно не трогать, по умолчанию в сост выкл)
   SPI1->CR1 |= SPI_CR1_MSTR;  // бит мастера (SPI_CR1_MSTR)
   SPI1->CR1 |= SPI_CR1_BR;    // SPI_CR1_BR_2; // spi_sck = SystemCoreClock /
   SPI1->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI;    // software slave CS management & internal slave select
@@ -62,7 +65,11 @@ uint8_t spi_send(uint8_t data)
 
 uint8_t spi_read(void)
 {
- return spi_send(0xFF); 
+  //CS_CLR;
+  //SPI1->CR1 |= SPI_CR1_BIDIMODE;
+  return spi_send(0xFF); 
+  //CS_SET;
+  //SPI1->CR1 &= ~SPI_CR1_BIDIMODE;
 }
 
 void blink_(uint16_t freq)
