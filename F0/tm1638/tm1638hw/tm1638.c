@@ -3,14 +3,13 @@
 
 #define CS_SET GPIOB->BSRR |= GPIO_BSRR_BS_4 // GPIOB->ODR &= ~GPIO_ODR_4;
 #define CS_CLR GPIOB->BSRR |= GPIO_BSRR_BR_4 // GPIOB->ODR |= GPIO_ODR_4;
+
 // PB3 - SPI1_SCK (clock)
 // PB4 - CS (chip select)
 // PB5 - SPI1_MOSI (data)
 
 #define SPI1_DR_8bit  (*(__IO uint8_t *)((uint32_t)&(SPI1->DR)))
 #define EMPTYCODE  17
-
-//extern const uint8_t code_tab[];
 
 struct 
 {
@@ -38,20 +37,10 @@ void spi_init(void)
 
   RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
   // SPI configuration
-  // SET mode 0 (CPOL = 0 / CPHA = 0) to SPI1
-  // SPI1->CR1 &= ~SPI_CR1_CPOL; // SPI1->CR1 &= ~SPI_CR1_CPHA;
-  // SPI1->CR1 |= SPI_CR1_CPOL;  // SPI1->CR1 |= SPI_CR1_CPHA;
-  
-  //SPI1->CR1 &= ~SPI_CR1_LSBFIRST;         //MSB will be first
   SPI1->CR1 |= SPI_CR1_LSBFIRST; // !! Frame Format младшим битов вперед (little endian)
-  SPI1->CR1 &= ~SPI_CR1_BIDIMODE; // выкл bi-directional mode (можно не трогать, по умолчанию в сост выкл)
-
   SPI1->CR1 |= SPI_CR1_MSTR; // бит мастера (SPI_CR1_MSTR)
   SPI1->CR1 |= SPI_CR1_BR;   // SPI_CR1_BR_2; // spi_sck = SystemCoreClock /
   SPI1->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI; // software slave CS management & internal slave select
-  // SSM(Software slave management) — программное управление NSS, когда этот бит установлен вместо уровня 
-  // на входе NSS контролируется состояние бита SSI, если сброшен — контролируется состояние вывода NSS
-  // SPI1->CR2 |= SPI_CR2_DS_3 | SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0; // 16 bit format
   SPI1->CR2 |= SPI_CR2_FRXTH; // бит наличия данных в очереди на четверть длины - 8 бит (SPI_CR2_FRXTH)
   SPI1->CR2 |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0; //8-bit
   SPI1->CR1 |= SPI_CR1_SPE; // SPI вкл
@@ -60,15 +49,8 @@ void spi_init(void)
 uint8_t spi_send_byte(uint8_t data)
 {
   while (!(SPI1->SR & SPI_SR_TXE)); // TX buffer is empty
-  //while ( ( SPI1->SR & SPI_SR_TXE ) == 0 ) {};
-  //SPI1_DR_8bit = INVERT_BYTE(data); // SPI1->DR = data;
-  //SPI1_DR_8bit = data & 0xFF;
   SPI1_DR_8bit = data;
-  //*(volatile uint8_t *) & SPI1->DR = data;
-  //*(volatile uint8_t *)&SPI1->DR = (data >> 8) & 0xFF;//INVERT_BYTE(data & 0xFF);
-  //SPI1_DR_8bit = data; // SPI1->DR = data;
   while (!(SPI1->SR & SPI_SR_RXNE)); // while (!(SPI1->SR & SPI_SR_BSY)); //
-  //return *(volatile uint8_t *) & SPI1->DR;
   return SPI1_DR_8bit;
 }
 
@@ -79,15 +61,9 @@ uint8_t tm1638_get_key(void)
   spi_send_byte(0x42);
   SPI1->CR1 |= SPI_CR1_BIDIMODE;  // вкл bi-directional mode
   for (i = 0; i < 4; i++)
-    //c[i] = spi_send_byte(0xFF);
     key_value |= spi_send_byte(0xFF) << i;
   CS_SET;
   SPI1->CR1 &= ~SPI_CR1_BIDIMODE; // выкл bi-directional mode
-  //for (i = 0; i < 4; i++)
-  //  key_value |= c[i] << i;
-  //for (i = 0; i < 8; i++)
-  //  if ((0x01 << i) == key_value)
-  //break;
   return key_value;
 }
 
@@ -129,8 +105,6 @@ void tm1638_seg(uint8_t seg_num, uint8_t data, uint8_t dot) // seg_num 0-7; кл
 
 void tm1638_init(void)
 {
-  //tm1638_write_byte(0x88 | brightness);
-  //spi_send_byte(0x88 | (brightness & 0x07));
   write_cmd(0x8E);
   write_cmd(0x44);
   CS_CLR;
@@ -212,7 +186,6 @@ static void bin_bcd4x(uint_fast16_t a)
     bcd4x.tens++;
   }
 }
-
 
 static void tm1638_disp_4arr1(uint8_t *array)
 {
