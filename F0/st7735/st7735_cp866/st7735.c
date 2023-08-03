@@ -4,17 +4,24 @@
 #define CHAR_LEN 64                // 64=(8 x 8 )  i.e. width * height
 #define MAX_CHAR 1                 //
 #define BUF_LEN MAX_CHAR *CHAR_LEN // =64
+#define NOPSOME __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+
+// SPI1->CR1 &= ~SPI_CR1_SPE;
+// SPI1->CR1 |= SPI_CR1_SPE;
+
+#define SPI2SIXTEEN SPI1->CR2 &= ~SPI_CR2_FRXTH; SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
+#define SPI2EIGHT   SPI1->CR2 |= SPI_CR2_FRXTH; SPI1->CR2 &= ~SPI_CR2_DS_3; // обратно на 8 бит  
 
 volatile uint16_t buf[BUF_LEN];
 extern void delay_ms(uint32_t ms);
 
 void spi_init(void)
 {
-  // SCK  PB3
+  // SCK PB3
   GPIOB->MODER |= GPIO_MODER_MODER3_1; // alternate function
-  // MOSI  PB5
+  // MOSI PB5
   GPIOB->MODER |= GPIO_MODER_MODER5_1; // alternate function
-  // soft nCS   PB4
+  // soft nCS PB4
   GPIOB->MODER |= GPIO_MODER_MODER4_0; // PB4 as output
   GPIOB->OSPEEDR |= (GPIO_OSPEEDER_OSPEEDR4_0);
   // DC (RS) PB1
@@ -37,9 +44,7 @@ void st7735_send(uint8_t dc, uint8_t data)
   
   *(uint8_t *)&SPI1->DR = data;
   while (!(SPI1->SR & SPI_SR_TXE));
-  
-  data = *(uint8_t *)&SPI1->DR;
-  while (!(SPI1->SR & SPI_SR_RXNE));
+  NOPSOME;  
 }
 
 void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
@@ -58,24 +63,14 @@ void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
   st7735_send(LCD_C, ST77XX_RAMWR);
   uint16_t len = (uint16_t)((uint16_t)(x1 - x0 + 1) * (uint16_t)(y1 - y0 + 1));
   DC_UP;
-
-  SPI1->CR1 &= ~SPI_CR1_SPE;
-  SPI1->CR2 &= ~SPI_CR2_FRXTH;
-  SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
-  SPI1->CR1 |= SPI_CR1_SPE;
-
+  SPI2SIXTEEN;
   for (uint16_t i = 0; i < len; i++)
   {
     SPI1->DR = color;
-    while (!(SPI1->SR & SPI_SR_TXE))
-      ;
+    while (!(SPI1->SR & SPI_SR_TXE));
   }
   CS_UP;
-
-  SPI1->CR1 &= ~SPI_CR1_SPE;
-  SPI1->CR2 |= SPI_CR2_FRXTH;
-  SPI1->CR2 &= ~SPI_CR2_DS_3; // обратно на 8 бит
-  SPI1->CR1 |= SPI_CR1_SPE;
+  SPI2EIGHT;
 }
 
 void st7735_send_char(uint8_t x, uint8_t y, uint8_t ch, uint16_t fg_color, uint16_t bg_color)
@@ -95,24 +90,14 @@ void st7735_send_char(uint8_t x, uint8_t y, uint8_t ch, uint16_t fg_color, uint1
   st7735_send(LCD_D, y + 7);
   st7735_send(LCD_C, ST77XX_RAMWR);
   DC_UP;
-
-  SPI1->CR1 &= ~SPI_CR1_SPE;
-  SPI1->CR2 &= ~SPI_CR2_FRXTH;
-  SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
-  SPI1->CR1 |= SPI_CR1_SPE;
-
+  SPI2SIXTEEN;
   for (uint8_t i = 0; i < BUF_LEN; i++) {
     uint16_t pixel = buf[i];
     SPI1->DR = pixel;
-    while (!(SPI1->SR & SPI_SR_TXE))
-      ;
+    while (!(SPI1->SR & SPI_SR_TXE));
   }
   CS_UP;
-
-  SPI1->CR1 &= ~SPI_CR1_SPE;
-  SPI1->CR2 |= SPI_CR2_FRXTH;
-  SPI1->CR2 &= ~SPI_CR2_DS_3; // обратно на 8 бит
-  SPI1->CR1 |= SPI_CR1_SPE;
+  SPI2EIGHT;
 }
 
 void st7735_init(void)
