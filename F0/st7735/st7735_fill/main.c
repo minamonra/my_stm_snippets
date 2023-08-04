@@ -92,6 +92,9 @@ void st7735_send(uint8_t dc, uint8_t data)
   if (dc == LCD_D) DC_UP; else DC_DN;
   *(uint8_t *)&SPI1->DR = data;
   while (!(SPI1->SR & SPI_SR_TXE));
+  *(uint8_t *)&SPI1->DR = data;
+  while (!(SPI1->SR & SPI_SR_RXNE));
+  data = *(uint8_t *)&SPI1->DR;
 }
 
 void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
@@ -114,8 +117,8 @@ void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
   SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
   for (uint16_t i=0; i < len; i++)
   {
-    SPI1->DR = color;
     while (!(SPI1->SR & SPI_SR_TXE));
+    SPI1->DR = color;
   }
   CS_UP;
   SPI1->CR2 |= SPI_CR2_FRXTH;

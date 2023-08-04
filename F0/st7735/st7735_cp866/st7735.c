@@ -4,10 +4,6 @@
 #define CHAR_LEN 64                // 64=(8 x 8 )  i.e. width * height
 #define MAX_CHAR 1                 //
 #define BUF_LEN MAX_CHAR *CHAR_LEN // =64
-#define NOPSOME __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-
-// SPI1->CR1 &= ~SPI_CR1_SPE;
-// SPI1->CR1 |= SPI_CR1_SPE;
 
 #define SPI2SIXTEEN SPI1->CR2 &= ~SPI_CR2_FRXTH; SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
 #define SPI2EIGHT   SPI1->CR2 |= SPI_CR2_FRXTH; SPI1->CR2 &= ~SPI_CR2_DS_3; // обратно на 8 бит  
@@ -42,9 +38,10 @@ void st7735_send(uint8_t dc, uint8_t data)
 {
   if (dc == LCD_D) DC_UP; else DC_DN;
   
-  *(uint8_t *)&SPI1->DR = data;
   while (!(SPI1->SR & SPI_SR_TXE));
-  NOPSOME;  
+  *(uint8_t *)&SPI1->DR = data;
+  while (!(SPI1->SR & SPI_SR_RXNE));
+  data = *(uint8_t *)&SPI1->DR;
 }
 
 void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
@@ -66,8 +63,8 @@ void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
   SPI2SIXTEEN;
   for (uint16_t i = 0; i < len; i++)
   {
-    SPI1->DR = color;
     while (!(SPI1->SR & SPI_SR_TXE));
+    SPI1->DR = color;
   }
   CS_UP;
   SPI2EIGHT;
@@ -93,8 +90,8 @@ void st7735_send_char(uint8_t x, uint8_t y, uint8_t ch, uint16_t fg_color, uint1
   SPI2SIXTEEN;
   for (uint8_t i = 0; i < BUF_LEN; i++) {
     uint16_t pixel = buf[i];
+	while (!(SPI1->SR & SPI_SR_TXE));
     SPI1->DR = pixel;
-    while (!(SPI1->SR & SPI_SR_TXE));
   }
   CS_UP;
   SPI2EIGHT;
