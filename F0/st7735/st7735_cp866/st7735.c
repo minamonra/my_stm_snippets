@@ -90,7 +90,7 @@ void st7735_send_char(uint8_t x, uint8_t y, uint8_t ch, uint16_t fg_color, uint1
   SPI2SIXTEEN;
   for (uint8_t i = 0; i < BUF_LEN; i++) {
     uint16_t pixel = buf[i];
-	while (!(SPI1->SR & SPI_SR_TXE));
+    while (!(SPI1->SR & SPI_SR_TXE));
     SPI1->DR = pixel;
   }
   CS_UP;
