@@ -40,8 +40,9 @@ void st7735_send(uint8_t dc, uint8_t data)
   
   while (!(SPI1->SR & SPI_SR_TXE));
   *(uint8_t *)&SPI1->DR = data;
-  while (!(SPI1->SR & SPI_SR_RXNE));
-  data = *(uint8_t *)&SPI1->DR;
+  while(SPI1->SR & SPI_SR_BSY);
+  // while (!(SPI1->SR & SPI_SR_RXNE));
+  // data = *(uint8_t *)&SPI1->DR;
 }
 
 void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
@@ -66,6 +67,7 @@ void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)
     while (!(SPI1->SR & SPI_SR_TXE));
     SPI1->DR = color;
   }
+  while (!(SPI1->SR & SPI_SR_TXE) || (SPI1->SR & SPI_SR_BSY));
   CS_UP;
   SPI2EIGHT;
 }
@@ -93,6 +95,7 @@ void st7735_send_char(uint8_t x, uint8_t y, uint8_t ch, uint16_t fg_color, uint1
     while (!(SPI1->SR & SPI_SR_TXE));
     SPI1->DR = pixel;
   }
+  while (!(SPI1->SR & SPI_SR_TXE) || (SPI1->SR & SPI_SR_BSY));
   CS_UP;
   SPI2EIGHT;
 }
