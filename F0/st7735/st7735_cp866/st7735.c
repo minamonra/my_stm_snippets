@@ -7,6 +7,7 @@
 
 #define SPI2SIXTEEN SPI1->CR2 &= ~SPI_CR2_FRXTH; SPI1->CR2 |= SPI_CR2_DS_3; // переключаемся на 16 бит
 #define SPI2EIGHT   SPI1->CR2 |= SPI_CR2_FRXTH; SPI1->CR2 &= ~SPI_CR2_DS_3; // обратно на 8 бит  
+#define SPIDR8BIT (*(__IO uint8_t *)((uint32_t)&SPI1->DR))
 
 volatile uint16_t buf[BUF_LEN];
 extern void delay_ms(uint32_t ms);
@@ -39,7 +40,8 @@ void st7735_send(uint8_t dc, uint8_t data)
   if (dc == LCD_D) DC_UP; else DC_DN;
   
   while (!(SPI1->SR & SPI_SR_TXE));
-  *(uint8_t *)&SPI1->DR = data;
+  SPIDR8BIT = data;
+  // *(uint8_t *)&SPI1->DR = data;
   while(SPI1->SR & SPI_SR_BSY);
   // while (!(SPI1->SR & SPI_SR_RXNE));
   // data = *(uint8_t *)&SPI1->DR;
