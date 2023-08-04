@@ -28,6 +28,8 @@ volatile uint32_t pa2ms  = 0;
 #define LCD_C  0x00
 #define LCD_D  0x01
 
+#define SPIDR8BIT (*(__IO uint8_t *)((uint32_t)&SPI1->DR))
+
 void delay_ms(uint32_t ms)
 {
   ddms = ms;
@@ -92,7 +94,7 @@ void st7735_send(uint8_t dc, uint8_t data)
   if (dc == LCD_D) DC_UP; else DC_DN;
   
   while (!(SPI1->SR & SPI_SR_TXE));
-  *(uint8_t *)&SPI1->DR = data;
+  SPIDR8BIT = data; // *(uint8_t *)&SPI1->DR = data;
 
   while(SPI1->SR & SPI_SR_BSY);
 
