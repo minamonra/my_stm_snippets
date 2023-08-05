@@ -39,12 +39,13 @@ void st7735_send(uint8_t dc, uint8_t data)
 {
   if (dc == LCD_D) DC_UP; else DC_DN;
   
-  while (!(SPI1->SR & SPI_SR_TXE));
   SPIDR8BIT = data;
-  // *(uint8_t *)&SPI1->DR = data;
   while(SPI1->SR & SPI_SR_BSY);
+  
+  // while (!(SPI1->SR & SPI_SR_TXE));
+  // SPIDR8BIT = data;
   // while (!(SPI1->SR & SPI_SR_RXNE));
-  // data = *(uint8_t *)&SPI1->DR;
+  // uint8_t temp = SPIDR8BIT;
 }
 
 void st7735_fill(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1, uint16_t color)

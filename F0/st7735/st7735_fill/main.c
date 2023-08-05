@@ -93,10 +93,13 @@ void st7735_send(uint8_t dc, uint8_t data)
 {
   if (dc == LCD_D) DC_UP; else DC_DN;
   
-  while (!(SPI1->SR & SPI_SR_TXE));
-  SPIDR8BIT = data; // *(uint8_t *)&SPI1->DR = data;
-
+  SPIDR8BIT = data;
   while(SPI1->SR & SPI_SR_BSY);
+  
+  // while (!(SPI1->SR & SPI_SR_TXE));
+  // SPIDR8BIT = data;
+  // while (!(SPI1->SR & SPI_SR_RXNE));
+  // uint8_t temp = SPIDR8BIT;
 
   // while (!(SPI1->SR & SPI_SR_RXNE));
   // data = *(uint8_t *)&SPI1->DR;
