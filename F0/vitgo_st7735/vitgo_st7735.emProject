@@ -1,0 +1,75 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="vitgo_st7735" version="2" target="8">
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="None" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 2"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="Level 2 balanced" />
+  <project Name="vitgo_st7735">
+    <configuration
+      LIBRARY_IO_TYPE="RTT"
+      Name="Common"
+      Target="STM32F031K6Tx"
+      arm_architecture="v6M"
+      arm_compiler_variant="SEGGER"
+      arm_core_type="Cortex-M0"
+      arm_endian="Little"
+      arm_fp_abi="Soft"
+      arm_fpu_type="None"
+      arm_linker_heap_size="1024"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="2048"
+      arm_linker_variant="SEGGER"
+      arm_simulator_memory_simulation_parameter="ROM;0x08000000;0x00008000;RAM;0x20000000;0x00001000"
+      arm_target_device_name="STM32F031K6"
+      arm_target_interface_type="SWD"
+      c_preprocessor_definitions="ARM_MATH_CM0;STM32F031x6;__STM32F031_SUBFAMILY;__STM32F0XX_FAMILY;__NO_FPU_ENABLE"
+      c_user_include_directories="$(ProjectDir)/CMSIS_5/CMSIS/Core/Include;$(ProjectDir)/STM32F0xx/Device/Include"
+      debug_register_definition_file="$(ProjectDir)/STM32F0x1_Registers.xml"
+      debug_stack_pointer_start="__stack_end__"
+      debug_start_from_entry_point_symbol="Yes"
+      debug_target_connection="J-Link"
+      gcc_entry_point="Reset_Handler"
+      link_linker_script_file="$(ProjectDir)/STM32F0xx_Flash.icf"
+      linker_memory_map_file="$(ProjectDir)/STM32F031K6Tx_MemoryMap.xml"
+      macros="DeviceHeaderFile=$(PackagesDir)/STM32F0xx/Device/Include/stm32f0xx.h;DeviceSystemFile=$(PackagesDir)/STM32F0xx/Device/Source/system_stm32f0xx.c;DeviceVectorsFile=$(PackagesDir)/STM32F0xx/Source/stm32f031x6_Vectors.s;DeviceFamily=STM32F0xx;DeviceSubFamily=STM32F031;Target=STM32F031K6Tx"
+      project_directory=""
+      project_type="Executable"
+      target_reset_script="Reset();" />
+    <folder Name="CMSIS Files">
+      <file file_name="STM32F0xx/Device/Include/stm32f0xx.h" />
+      <file file_name="STM32F0xx/Device/Source/system_stm32f0xx.c">
+        <configuration
+          Name="Common"
+          default_code_section=".init"
+          default_const_section=".init_rodata" />
+      </file>
+    </folder>
+    <folder Name="Script Files">
+      <file file_name="STM32F0xx/Scripts/STM32F0xx_Target.js">
+        <configuration Name="Common" file_type="Reset Script" />
+      </file>
+    </folder>
+    <folder Name="Source Files">
+      <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
+      <file file_name="font7x15.h" />
+      <file file_name="lcd7735.c" />
+      <file file_name="lcd7735.h" />
+      <file file_name="main.c" />
+    </folder>
+    <folder Name="System Files">
+      <file file_name="SEGGER_THUMB_Startup.s" />
+      <file file_name="STM32F0xx/Source/stm32f031x6_Vectors.s">
+        <configuration Name="Common" file_type="Assembly" />
+      </file>
+      <file file_name="STM32F0xx/Source/STM32F0xx_Startup.s" />
+    </folder>
+  </project>
+</solution>

@@ -65,11 +65,11 @@ uint8_t spi_send(uint8_t data)
 
 uint8_t spi_read(void)
 {
-  //CS_CLR;
-  //SPI1->CR1 |= SPI_CR1_BIDIMODE;
+  // CS_CLR;
+  // SPI1->CR1 |= SPI_CR1_BIDIMODE;
   return spi_send(0xFF); 
-  //CS_SET;
-  //SPI1->CR1 &= ~SPI_CR1_BIDIMODE;
+  // CS_SET;
+  // SPI1->CR1 &= ~SPI_CR1_BIDIMODE;
 }
 
 void blink_(uint16_t freq)
