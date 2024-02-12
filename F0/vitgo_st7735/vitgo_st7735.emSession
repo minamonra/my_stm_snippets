@@ -36,8 +36,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="9" useTextEdit="1" path="main.c" left="0" selected="1" top="0" codecName="UTF-8"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="2" useTextEdit="1" path="lcd7735.c" left="0" top="0" codecName="UTF-8"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="108" useTextEdit="1" path="main.c" left="0" selected="1" top="0" codecName="UTF-8"/>
  </Files>
  <EMStudioWindow activeProject="vitgo_st7735" fileDialogDefaultFilter="*.*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="X:/_cwork/vitgo_st7735" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

@@ -102,10 +102,9 @@ void spiTransmit(uint8_t data)
 
 volatile unsigned int counter1000;      // счетчик интервалов (такт 10 мкс)
 const unsigned char str1[]="VG.UCOZ.RU";
-const unsigned char str2[]="STM32F030";
+const unsigned char str2[]="STM32F0";
 const unsigned char str3[]="ST7735 DRIVER";
 const unsigned char str4[]="PRINT TIME: ";
-
 
 int main(void) {
   rcc_sysclockinit();

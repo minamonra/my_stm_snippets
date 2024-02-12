@@ -21,13 +21,13 @@ Memory use by input file:
   Object File                                       RX Code     RO Data     RW Data     ZI Data
   ---------------------------------------------  ----------  ----------  ----------  ----------
   lcd7735.o                                           1 406       3 136                        
-  main.o                                              1 424          48                      12
+  main.o                                              1 424          46                      12
   SEGGER_THUMB_Startup.o                                 20                                    
   stm32f031x6_Vectors.o                                 228                                    
   STM32F0xx_Startup.o                                    56                                    
   system_stm32f0xx.o                                    202          16           4            
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Subtotal (6 objects)                                3 336       3 200           4          12
+  Subtotal (6 objects)                                3 336       3 198           4          12
   ---------------------------------------------  ----------  ----------  ----------  ----------
   libc_v6m_t_le_eabi_balanced.a                          80                                    
   SEGGER_crtinit_v6m_t_le_eabi_balanced.a                74                                    
@@ -36,7 +36,7 @@ Memory use by input file:
   ---------------------------------------------  ----------  ----------  ----------  ----------
   Linker created (shared data, fills, blocks):                       40                   2 048
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              3 490       3 240           4       2 060
+  Total:                                              3 490       3 238           4       2 060
   =============================================  ==========  ==========  ==========  ==========
 
 Memory use by archive member:
@@ -49,10 +49,10 @@ Memory use by archive member:
                                                          74                                    
   ---------------------------------------------  ----------  ----------  ----------  ----------
   Subtotal (2 members from 2 archives)                  154                                    
-  Objects (6 files)                                   3 336       3 200           4          12
+  Objects (6 files)                                   3 336       3 198           4          12
   Linker created (shared data, fills, blocks):                       40                   2 048
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              3 490       3 240           4       2 060
+  Total:                                              3 490       3 238           4       2 060
   =============================================  ==========  ==========  ==========  ==========
 
 Memory use by linker:
@@ -64,10 +64,10 @@ Memory use by linker:
   ---------------------------------------------  ----------  ----------  ----------  ----------
   Subtotal (linker created):                                         40                   2 048
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Objects (6 files)                                   3 336       3 200           4          12
+  Objects (6 files)                                   3 336       3 198           4          12
   Archives (2 files)                                    154                                    
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              3 490       3 240           4       2 060
+  Total:                                              3 490       3 238           4       2 060
   =============================================  ==========  ==========  ==========  ==========
 
 
@@ -84,22 +84,22 @@ Sections by address:
   08000000-080000af  _vectors                          176  256
                                                                 Code  RX  stm32f031x6_Vectors.o
   080000b0-08000177  SystemCoreClockUpdate             200   4  Code  RX  system_stm32f0xx.o
-  08000178-080001d3  rcc_sysclockinit                   92   4  Code  RX  main.o
-  080001d4-080001fb  gpio_init                          40   4  Code  RX  main.o
-  080001fc-08000217  delay_ms                           28   4  Code  RX  main.o
-  08000218-080002ab  spi_init                          148   4  Code  RX  main.o
-  080002ac-08000617  main                              876   4  Code  RX  main.o
-  08000618-08000663  SysTick_Config                     76   4  Code  RX  main.o
-  08000664-08000687  SysTick_Handler                    36   4  Code  RX  main.o
-  08000688-08000707  __NVIC_SetPriority                128   4  Code  RX  main.o
-  08000708-0800073f  lcd7735_senddata                   56   4  Code  RX  lcd7735.o
-  08000740-08000773  lcd7735_sendCmd                    52   4  Code  RX  lcd7735.o
-  08000774-080007a7  lcd7735_sendData                   52   4  Code  RX  lcd7735.o
-  080007a8-0800082b  lcd7735_at                        132   4  Code  RX  lcd7735.o
-  0800082c-0800089b  lcd7735_init                      112   4  Code  RX  lcd7735.o
-  0800089c-0800099b  lcd7735_fillrect                  256   4  Code  RX  lcd7735.o
-  0800099c-08000a23  LCD7735_dec                       136   4  Code  RX  lcd7735.o
-  08000a24-08000bc7  lcd7735_putchar                   420   4  Code  RX  lcd7735.o
+  08000178-080001af  lcd7735_senddata                   56   4  Code  RX  lcd7735.o
+  080001b0-080001e3  lcd7735_sendCmd                    52   4  Code  RX  lcd7735.o
+  080001e4-08000217  lcd7735_sendData                   52   4  Code  RX  lcd7735.o
+  08000218-0800029b  lcd7735_at                        132   4  Code  RX  lcd7735.o
+  0800029c-0800030b  lcd7735_init                      112   4  Code  RX  lcd7735.o
+  0800030c-0800040b  lcd7735_fillrect                  256   4  Code  RX  lcd7735.o
+  0800040c-08000493  LCD7735_dec                       136   4  Code  RX  lcd7735.o
+  08000494-08000637  lcd7735_putchar                   420   4  Code  RX  lcd7735.o
+  08000638-08000693  rcc_sysclockinit                   92   4  Code  RX  main.o
+  08000694-080006bb  gpio_init                          40   4  Code  RX  main.o
+  080006bc-080006d7  delay_ms                           28   4  Code  RX  main.o
+  080006d8-0800076b  spi_init                          148   4  Code  RX  main.o
+  0800076c-08000ad7  main                              876   4  Code  RX  main.o
+  08000ad8-08000b23  SysTick_Config                     76   4  Code  RX  main.o
+  08000b24-08000b47  SysTick_Handler                    36   4  Code  RX  main.o
+  08000b48-08000bc7  __NVIC_SetPriority                128   4  Code  RX  main.o
   08000bc8-08000bdb  _start                             20   4  Code  RX  SEGGER_THUMB_Startup.o
   08000bdc-08000c0b  HardFault_Handler                  48   4  Code  RX  STM32F0xx_Startup.o
   08000c0c-08000c43  __aeabi_uidiv                      56   4  Code  RX  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
@@ -139,12 +139,13 @@ Sections by address:
   08000cd8-08000d4f  lcd7735_rect                      120   2  Code  RX  lcd7735.o
   08000d50-08000d57  reset_handler                       8   2  Code  RX  STM32F0xx_Startup.o
   08000d58-08000d62  str1                               11   1  Cnst  RO  main.o
-  08000d63-08000d6c  str2                               10   1  Cnst  RO  main.o
-  08000d6d-08000d7a  str3                               14   1  Cnst  RO  main.o
-  08000d7b-08000d87  str4                               13   1  Cnst  RO  main.o
-  08000d88-08000d8b  [.init_array]                       4   4  ----  --  STM32F0xx_Startup.o
-  08000d8c-08000d9b  AHBPrescTable                      16   1  Cnst  RO  system_stm32f0xx.o
-  08000d9c-080019db  NewBFontLAT                     3 136   1  Cnst  RO  lcd7735.o
+  08000d63-08000d70  str3                               14   1  Cnst  RO  main.o
+  08000d71-08000d7d  str4                               13   1  Cnst  RO  main.o
+  08000d7e-08000d7f  ( UNUSED .=.+2 )                    2   -  ----  -   -
+  08000d80-08000d83  [.init_array]                       4   4  ----  --  STM32F0xx_Startup.o
+  08000d84-08000d93  AHBPrescTable                      16   1  Cnst  RO  system_stm32f0xx.o
+  08000d94-080019d3  NewBFontLAT                     3 136   1  Cnst  RO  lcd7735.o
+  080019d4-080019db  str2                                8   1  Cnst  RO  main.o
   080019dc-080019ff  __SEGGER_init_ctors                36   4  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
   08001a00-08001a23  __SEGGER_init_table__              36   4  Cnst  RO  [ Linker created ]
   08001a24-08001a27  __SEGGER_init_data__                4   4  Cnst  RO  [ Linker created ]
@@ -183,7 +184,7 @@ Function symbols by name:
   FLASH_IRQHandler           0x08000CB1                  2  Code  Wk  stm32f031x6_Vectors.o
   HardFault_Handler          0x08000BDD                  4  Code  Wk  STM32F0xx_Startup.o
   I2C1_IRQHandler            0x08000CD1                  2  Code  Wk  stm32f031x6_Vectors.o
-  LCD7735_dec                0x0800099D         136      4  Code  Gb  lcd7735.o
+  LCD7735_dec                0x0800040D         136      4  Code  Gb  lcd7735.o
   NMI_Handler                0x08000CA5                  2  Code  Wk  stm32f031x6_Vectors.o
   PVD_IRQHandler             0x08000CAD                  2  Code  Wk  stm32f031x6_Vectors.o
   PendSV_Handler             0x08000CA9                  2  Code  Wk  stm32f031x6_Vectors.o
@@ -192,8 +193,8 @@ Function symbols by name:
   Reset_Handler              0x08000D51                  2  Code  Gb  STM32F0xx_Startup.o
   SPI1_IRQHandler            0x08000CD3                  2  Code  Wk  stm32f031x6_Vectors.o
   SVC_Handler                0x08000CA7                  2  Code  Wk  stm32f031x6_Vectors.o
-  SysTick_Config             0x08000619          76      4  Code  Lc  main.o
-  SysTick_Handler            0x08000665          36      4  Code  Gb  main.o
+  SysTick_Config             0x08000AD9          76      4  Code  Lc  main.o
+  SysTick_Handler            0x08000B25          36      4  Code  Gb  main.o
   SystemCoreClockUpdate      0x080000B1         200      4  Code  Gb  system_stm32f0xx.o
   SystemInit                 0x08000C5D           2      2  Code  Gb  system_stm32f0xx.o
   TIM14_IRQHandler           0x08000CCB                  2  Code  Wk  stm32f031x6_Vectors.o
@@ -206,7 +207,7 @@ Function symbols by name:
   TIM3_IRQHandler            0x08000CC9                  2  Code  Wk  stm32f031x6_Vectors.o
   USART1_IRQHandler          0x08000CD5                  2  Code  Wk  stm32f031x6_Vectors.o
   WWDG_IRQHandler            0x08000CAB                  2  Code  Wk  stm32f031x6_Vectors.o
-  __NVIC_SetPriority         0x08000689         128      4  Code  Lc  main.o
+  __NVIC_SetPriority         0x08000B49         128      4  Code  Lc  main.o
   __SEGGER_init_copy         0x08001A3B          20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
   __SEGGER_init_ctors        0x080019DD          26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
   __SEGGER_init_done         0x08000BD3                  4  Code  Gb  SEGGER_THUMB_Startup.o
@@ -216,44 +217,44 @@ Function symbols by name:
   __aeabi_uidivmod           0x08000C45          16      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
   __startup_complete         0x08000BD3                  4  Code  Gb  SEGGER_THUMB_Startup.o
   _start                     0x08000BC9          14      4  Code  Gb  SEGGER_THUMB_Startup.o
-  delay_ms                   0x080001FD          28      4  Code  Gb  main.o
+  delay_ms                   0x080006BD          28      4  Code  Gb  main.o
   exit                       0x08000BD7           2      4  Code  Gb  SEGGER_THUMB_Startup.o
-  gpio_init                  0x080001D5          40      4  Code  Gb  main.o
-  lcd7735_at                 0x080007A9         132      4  Code  Gb  lcd7735.o
-  lcd7735_fillrect           0x0800089D         256      4  Code  Gb  lcd7735.o
-  lcd7735_init               0x0800082D         112      4  Code  Gb  lcd7735.o
-  lcd7735_putchar            0x08000A25         420      4  Code  Gb  lcd7735.o
+  gpio_init                  0x08000695          40      4  Code  Gb  main.o
+  lcd7735_at                 0x08000219         132      4  Code  Gb  lcd7735.o
+  lcd7735_fillrect           0x0800030D         256      4  Code  Gb  lcd7735.o
+  lcd7735_init               0x0800029D         112      4  Code  Gb  lcd7735.o
+  lcd7735_putchar            0x08000495         420      4  Code  Gb  lcd7735.o
   lcd7735_putstr             0x08000C5F          70      2  Code  Gb  lcd7735.o
   lcd7735_rect               0x08000CD9         120      2  Code  Gb  lcd7735.o
-  lcd7735_sendCmd            0x08000741          52      4  Code  Gb  lcd7735.o
-  lcd7735_sendData           0x08000775          52      4  Code  Gb  lcd7735.o
-  lcd7735_senddata           0x08000709          56      4  Code  Gb  lcd7735.o
-  main                       0x080002AD         876      4  Code  Gb  main.o
-  rcc_sysclockinit           0x08000179          92      4  Code  Gb  main.o
+  lcd7735_sendCmd            0x080001B1          52      4  Code  Gb  lcd7735.o
+  lcd7735_sendData           0x080001E5          52      4  Code  Gb  lcd7735.o
+  lcd7735_senddata           0x08000179          56      4  Code  Gb  lcd7735.o
+  main                       0x0800076D         876      4  Code  Gb  main.o
+  rcc_sysclockinit           0x08000639          92      4  Code  Gb  main.o
   reset_handler              0x08000D51                  2  Code  Gb  STM32F0xx_Startup.o
-  spi_init                   0x08000219         148      4  Code  Gb  main.o
+  spi_init                   0x080006D9         148      4  Code  Gb  main.o
 
 Function symbols by address:
 
      Address  Symbol name                      Size  Align  Type  Bd  Object File
   ----------  -------------------------  ----------  -----  ----  --  -----------
   0x080000B1  SystemCoreClockUpdate             200      4  Code  Gb  system_stm32f0xx.o
-  0x08000179  rcc_sysclockinit                   92      4  Code  Gb  main.o
-  0x080001D5  gpio_init                          40      4  Code  Gb  main.o
-  0x080001FD  delay_ms                           28      4  Code  Gb  main.o
-  0x08000219  spi_init                          148      4  Code  Gb  main.o
-  0x080002AD  main                              876      4  Code  Gb  main.o
-  0x08000619  SysTick_Config                     76      4  Code  Lc  main.o
-  0x08000665  SysTick_Handler                    36      4  Code  Gb  main.o
-  0x08000689  __NVIC_SetPriority                128      4  Code  Lc  main.o
-  0x08000709  lcd7735_senddata                   56      4  Code  Gb  lcd7735.o
-  0x08000741  lcd7735_sendCmd                    52      4  Code  Gb  lcd7735.o
-  0x08000775  lcd7735_sendData                   52      4  Code  Gb  lcd7735.o
-  0x080007A9  lcd7735_at                        132      4  Code  Gb  lcd7735.o
-  0x0800082D  lcd7735_init                      112      4  Code  Gb  lcd7735.o
-  0x0800089D  lcd7735_fillrect                  256      4  Code  Gb  lcd7735.o
-  0x0800099D  LCD7735_dec                       136      4  Code  Gb  lcd7735.o
-  0x08000A25  lcd7735_putchar                   420      4  Code  Gb  lcd7735.o
+  0x08000179  lcd7735_senddata                   56      4  Code  Gb  lcd7735.o
+  0x080001B1  lcd7735_sendCmd                    52      4  Code  Gb  lcd7735.o
+  0x080001E5  lcd7735_sendData                   52      4  Code  Gb  lcd7735.o
+  0x08000219  lcd7735_at                        132      4  Code  Gb  lcd7735.o
+  0x0800029D  lcd7735_init                      112      4  Code  Gb  lcd7735.o
+  0x0800030D  lcd7735_fillrect                  256      4  Code  Gb  lcd7735.o
+  0x0800040D  LCD7735_dec                       136      4  Code  Gb  lcd7735.o
+  0x08000495  lcd7735_putchar                   420      4  Code  Gb  lcd7735.o
+  0x08000639  rcc_sysclockinit                   92      4  Code  Gb  main.o
+  0x08000695  gpio_init                          40      4  Code  Gb  main.o
+  0x080006BD  delay_ms                           28      4  Code  Gb  main.o
+  0x080006D9  spi_init                          148      4  Code  Gb  main.o
+  0x0800076D  main                              876      4  Code  Gb  main.o
+  0x08000AD9  SysTick_Config                     76      4  Code  Lc  main.o
+  0x08000B25  SysTick_Handler                    36      4  Code  Gb  main.o
+  0x08000B49  __NVIC_SetPriority                128      4  Code  Lc  main.o
   0x08000BC9  _start                             14      4  Code  Gb  SEGGER_THUMB_Startup.o
   0x08000BD3  __startup_complete                         4  Code  Gb  SEGGER_THUMB_Startup.o
   0x08000BD3  __SEGGER_init_done                         4  Code  Gb  SEGGER_THUMB_Startup.o
@@ -398,25 +399,25 @@ Read-only data symbols by name:
 
   Symbol name                   Address        Size  Align  Type  Bd  Object File
   -------------------------  ----------  ----------  -----  ----  --  -----------
-  AHBPrescTable              0x08000D8C          16         Cnst  Gb  system_stm32f0xx.o
-  NewBFontLAT                0x08000D9C       3 136         Cnst  Gb  lcd7735.o
+  AHBPrescTable              0x08000D84          16         Cnst  Gb  system_stm32f0xx.o
+  NewBFontLAT                0x08000D94       3 136         Cnst  Gb  lcd7735.o
   __SEGGER_init_data__       0x08001A24         [4]      4  Cnst  Lc  [ Linker created ]
   __SEGGER_init_table__      0x08001A00        [36]      4  Cnst  Lc  [ Linker created ]
   str1                       0x08000D58          11         Cnst  Gb  main.o
-  str2                       0x08000D63          10         Cnst  Gb  main.o
-  str3                       0x08000D6D          14         Cnst  Gb  main.o
-  str4                       0x08000D7B          13         Cnst  Gb  main.o
+  str2                       0x080019D4           8         Cnst  Gb  main.o
+  str3                       0x08000D63          14         Cnst  Gb  main.o
+  str4                       0x08000D71          13         Cnst  Gb  main.o
 
 Read-only data symbols by address:
 
      Address  Symbol name                      Size  Align  Type  Bd  Object File
   ----------  -------------------------  ----------  -----  ----  --  -----------
   0x08000D58  str1                               11         Cnst  Gb  main.o
-  0x08000D63  str2                               10         Cnst  Gb  main.o
-  0x08000D6D  str3                               14         Cnst  Gb  main.o
-  0x08000D7B  str4                               13         Cnst  Gb  main.o
-  0x08000D8C  AHBPrescTable                      16         Cnst  Gb  system_stm32f0xx.o
-  0x08000D9C  NewBFontLAT                     3 136         Cnst  Gb  lcd7735.o
+  0x08000D63  str3                               14         Cnst  Gb  main.o
+  0x08000D71  str4                               13         Cnst  Gb  main.o
+  0x08000D84  AHBPrescTable                      16         Cnst  Gb  system_stm32f0xx.o
+  0x08000D94  NewBFontLAT                     3 136         Cnst  Gb  lcd7735.o
+  0x080019D4  str2                                8         Cnst  Gb  main.o
   0x08001A00  __SEGGER_init_table__            [36]      4  Cnst  Lc  [ Linker created ]
   0x08001A24  __SEGGER_init_data__              [4]      4  Cnst  Lc  [ Linker created ]
 
@@ -460,8 +461,8 @@ Untyped symbols by name:
                              0x20000000                     ----  Gb  [ Linker created ]
   __STACKSIZE_PROCESS__      0x00000000                     ----  Gb  [ Linker created ]
   __STACKSIZE__              0x00000800                     ----  Gb  [ Linker created ]
-  __ctors_end__              0x08000D8C                     ----  Gb  [ Linker created ]
-  __ctors_start__            0x08000D88                     ----  Gb  [ Linker created ]
+  __ctors_end__              0x08000D84                     ----  Gb  [ Linker created ]
+  __ctors_start__            0x08000D80                     ----  Gb  [ Linker created ]
   __stack_end__              0x20001000                     ----  Gb  [ Linker created ]
   __thread_pointer$          0x00000000                     ----  Gb  [ Linker created ]
   _vectors                   0x08000000       [176]    256  Code  Gb  stm32f031x6_Vectors.o
@@ -494,8 +495,8 @@ Untyped symbols by address:
                                                             ----  Gb  [ Linker created ]
   0x08000000  __FLASH1_segment_start__                      ----  Gb  [ Linker created ]
   0x080000B0  _vectors_end                             256  Code  Lc  stm32f031x6_Vectors.o
-  0x08000D88  __ctors_start__                               ----  Gb  [ Linker created ]
-  0x08000D8C  __ctors_end__                                 ----  Gb  [ Linker created ]
+  0x08000D80  __ctors_start__                               ----  Gb  [ Linker created ]
+  0x08000D84  __ctors_end__                                 ----  Gb  [ Linker created ]
   0x08001A4E  __FLASH_segment_used_end__
                                                             ----  Gb  [ Linker created ]
   0x08001A4E  __FLASH1_segment_used_end__
@@ -524,14 +525,14 @@ Untyped symbols by address:
 Memory breakdown:
 
     3 490 bytes read-only  code    + 
-    3 240 bytes read-only  data    =   6 730 bytes read-only (total)
+    3 238 bytes read-only  data    =   6 728 bytes read-only (total)
     2 064 bytes read-write data
 
 Region summary:
 
   Name        Range                     Size                 Used               Unused       Alignment Loss
   ----------  -----------------  -----------  -------------------  -------------------  -------------------
-  FLASH       08000000-08007fff       32 768        6 734  20.55%       26 034  79.45%            0   0.00%
+  FLASH       08000000-08007fff       32 768        6 732  20.54%       26 036  79.46%            0   0.00%
   RAM         20000000-20000fff        4 096        2 064  50.39%        2 032  49.61%            0   0.00%
 
 Link complete: 0 errors, 0 warnings, 0 remarks
