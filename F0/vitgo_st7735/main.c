@@ -64,15 +64,22 @@ void spi_init(void)
   // Reset PB0
   GPIOB->MODER   |= GPIO_MODER_MODER0_0;
   GPIOB->OSPEEDR |= (GPIO_OSPEEDER_OSPEEDR0_0);
+  // Chipselect SET
   CS_UP;
   RCC->APB2ENR   |= RCC_APB2ENR_SPI1EN;
-  SPI1->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_BR_0;
-  SPI1->CR2 |= SPI_CR2_FRXTH;
+  // Master selection | 
+  SPI1->CR1 |= SPI_CR1_MSTR;
+  // software slave management (программное управление слэйвом)
+  SPI1->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI;
+  SPI1->CR1 |= SPI_CR1_BR_0; // BR: Fpclk/
+  SPI1->CR2 |= SPI_CR2_FRXTH; // 8-bit Rx fifo
   
   SPI1->CR2 |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0; // 8-bit
 
-  // SPI1->CR1 &= ~(SPI_CR1_RXONLY);	
-  // SPI1->CR1 |= SPI_CR2_FRF;
+  // SPI1->CR2 |= SPI_CR2_RXDMAEN; // разрешить передачу принятых данных через DMA
+  // SPI1->CR2 |= SPI_CR2_TXDMAEN; // Разрешить принимать данные для передачи через DMA
+  // SPI1->CR1 |= SPI_CR2_FRF; // FRF: Frame format
+  
   SPI1->CR1 |= SPI_CR1_SPE; // Go
 }
 
@@ -113,27 +120,28 @@ int main(void) {
   spi_init();
   lcd7735_init();
   
-  unsigned char x,y;   // координаты красного поля
-  signed char sx,sy; // направление движения красного поля
+  unsigned char x,y;    // координаты красного поля
+  signed char sx,sy;    // направление движения красного поля
   x=70; y=10;
   sx=-1; sy=1;
 
-  unsigned char y1=10;   // координаты надписи
+  unsigned char y1=10;  // координаты надписи
   signed char sy1=1;    // направление движения
 
   unsigned char y2=5;   // координаты надписи
   signed char sy2=1;    // направление движения
 
-  unsigned char ss=0;  // счетчики для обеспечения разных скоростей движения надписей
+  unsigned char ss=0;   // счетчики для обеспечения разных скоростей движения надписей
   unsigned char ss1=0;
 
   unsigned int counterStart=0; // переменная для расчета времени исполнения одного хода цикла
 
   lcd7735_fillrect(0, 0, 128, 160, 0xF800); // заполним весь экран красным  цветом
 
-  unsigned char startChar=0;    // переменные для организации печати знакогенератора
+  unsigned char startChar=0; // переменные для организации печати знакогенератора
   unsigned char startCharPos=8;
   unsigned char chrs;
+  unsigned int counterLen=counter1000-counterStart;
 
   do {
     counterStart=counter1000;
@@ -169,11 +177,9 @@ int main(void) {
     lcd7735_putchar(18, 4+18*8, ' ', 0xFFFF, 0x07E0);
     lcd7735_putchar(34, 4, ' ', 0xFFFF, 0x07E0);
 
-    lcd7735_putstr(2,   12, str4, 0xFFFF, 0x0000);      // печатаем "FPS:"
+    lcd7735_putstr(2,   12, str4, 0xFFFF, 0x0000); // печатаем "FPS:"
 
-    unsigned int counterLen=counter1000-counterStart;
-
-    LCD7735_dec(counterLen/10, 3, 2, 108, 0xFFFF, 0x0000);	// печать значения времени цикла
+    LCD7735_dec(counterLen/10, 3, 2, 108, 0xFFFF, 0x0000); // печать значения времени цикла
     lcd7735_putchar(2, 128, '.', 0xFFFF, 0x0000);
     LCD7735_dec(counterLen, 1, 2, 136, 0xFFFF, 0x0000);	// печать значения времени цикла
 
@@ -213,10 +219,10 @@ int main(void) {
     if (y2==1) sy2=1;
     if (y2==28) sy2=-1;
     }
-    //blink_(300);
+    // blink_(300);
     
   while (1);
-  //LCD_CS1;
+  // LCD_CS1;
 }
 
 void SysTick_Handler(void) 
