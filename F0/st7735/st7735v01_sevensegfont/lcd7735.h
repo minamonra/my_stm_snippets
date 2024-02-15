@@ -35,16 +35,6 @@
 
 #define SPIDR8BIT (*(__IO uint8_t *)((uint32_t)&SPI1->DR))
 
-// Управление линией LCD_RST
-#define LCD_RST1  GPIOB->BSRR |= GPIO_BSRR_BS_0
-#define LCD_RST0  GPIOB->BSRR |= GPIO_BSRR_BR_0
-// Управление линией LCD_DC // DC (RS) PB1
-#define LCD_DC1   GPIOB->BSRR |= GPIO_BSRR_BS_1
-#define LCD_DC0   GPIOB->BSRR |= GPIO_BSRR_BR_1
-// Управление линией LCD_CS // Chip select PB4
-#define LCD_CS1   GPIOB->BSRR |= GPIO_BSRR_BS_4
-#define LCD_CS0   GPIOB->BSRR |= GPIO_BSRR_BR_4
-
 // Some ready-made 16-bit ('565') color settings:
 #define ST77XX_BLACK      0x0000
 #define ST77XX_WHITE      0xFFFF

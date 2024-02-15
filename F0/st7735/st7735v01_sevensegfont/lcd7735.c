@@ -20,7 +20,7 @@ void lcd7735_senddata(unsigned char data)
 // отправка команды на дисплей с ожиданием конца передачи
 void lcd7735_sendCmd(unsigned char cmd)
 {
-  LCD_DC0;
+  DC_DN;
   lcd7735_senddata(cmd);
   while(SPI1->SR & SPI_SR_BSY);
 }
@@ -28,7 +28,7 @@ void lcd7735_sendCmd(unsigned char cmd)
 // отправка данных на дисплей с ожиданием конца передачи
 void lcd7735_sendData(unsigned char data) 
 {
-  LCD_DC1;
+  DC_UP;
   lcd7735_senddata(data);
   while(SPI1->SR & SPI_SR_BSY);
 }
@@ -37,14 +37,14 @@ void lcd7735_sendData(unsigned char data)
 void lcd7735_at(unsigned char startX, unsigned char startY, unsigned char stopX, unsigned char stopY) 
 {
   lcd7735_sendCmd(0x2A);
-  LCD_DC1;
+  DC_UP;
   lcd7735_senddata(0x00);
   lcd7735_senddata(startX);
   lcd7735_senddata(0x00);
   lcd7735_sendData(stopX);
 
   lcd7735_sendCmd(0x2B);
-  LCD_DC1;
+  DC_UP;
   lcd7735_senddata(0x00);
   lcd7735_senddata(startY);
   lcd7735_senddata(0x00);
@@ -52,28 +52,29 @@ void lcd7735_at(unsigned char startX, unsigned char startY, unsigned char stopX,
 }
 
 // Инициализация
-void lcd7735_init(uint16_t color) {
-  CS_DN;//LCD_CS0;            // CS=0  - начали сеанс работы с дисплеем
+void lcd7735_init(uint16_t color) 
+{
+  CS_DN; // CS=0  - начали сеанс работы с дисплеем
   // сброс дисплея
   // аппаратный сброс дисплея
-  RST_DN; //LCD_RST0;                   // RST=0
-  delay_ms(LCD_RST_DLY);		// пауза
-  RST_UP; //LCD_RST1;                   // RST=1
-  delay_ms(LCD_RST_DLY);		// пауза
+  RST_DN;
+  delay_ms(LCD_RST_DLY); // пауза
+  RST_UP; // RST=1
+  delay_ms(LCD_RST_DLY); // пауза
   
   // инициализация дисплея
-  lcd7735_sendCmd(0x11);      // после сброса дисплей спит - даем команду проснуться
-  delay_ms(10);		// пауза
+  lcd7735_sendCmd(0x11); // после сброса дисплей спит - даем команду проснуться
+  delay_ms(10); // пауза
   lcd7735_sendCmd (0x3A); // режим цвета:
   lcd7735_sendData(0x05); //             16 бит
   lcd7735_sendCmd (0x36); // направление вывода изображения:
 #ifdef RGB
   lcd7735_sendData(0x1C);         // снизу вверх, справа на лево, порядок цветов RGB
 #else
-  lcd7735_sendData(0x14);         // снизу вверх, справа на лево, порядок цветов BGR
+  lcd7735_sendData(0x14); // снизу вверх, справа на лево, порядок цветов BGR
 #endif
   lcd7735_sendCmd (0x29); // включаем изображение
-  CS_UP; //LCD_CS1;
+  CS_UP;
   lcd7735_fillrect(0, 0, 127, 159, color);
 }
 
@@ -82,10 +83,10 @@ void lcd7735_fillrect(unsigned char startX, unsigned char startY, unsigned char 
 {
   unsigned char y;
   unsigned char x;
-  LCD_CS0;
+  CS_DN;
   lcd7735_at(startX, startY, stopX, stopY);
   lcd7735_sendCmd(0x2C);
-  LCD_DC1;
+  DC_UP;
   SPI2SIXTEEN;
 
   for (y=startY;y<stopY+1;y++)
@@ -96,20 +97,20 @@ void lcd7735_fillrect(unsigned char startX, unsigned char startY, unsigned char 
     }
   while (!(SPI1->SR & SPI_SR_TXE) || (SPI1->SR & SPI_SR_BSY));
   SPI2EIGHT;
-  CS_UP; // LCD_CS1;
+  CS_UP;
 }
 
 // вывод пиксела
 void lcd7735_putpix(unsigned char x, unsigned char y, unsigned int Color)
 {
-  LCD_CS0;
+  CS_DN;
 
   lcd7735_at(x, y, x, y);
   lcd7735_sendCmd(0x2C);
   lcd7735_sendData((unsigned char)((Color & 0xFF00)>>8));
   lcd7735_sendData((unsigned char) (Color & 0x00FF));
 
-  LCD_CS1;
+  CS_UP;
 }
 
 // процедура рисования линии
@@ -188,12 +189,12 @@ void LCD7735_dec(unsigned int numb, unsigned char dcount, unsigned char x, unsig
 void lcd7735_putchar(unsigned char x, unsigned char y, unsigned char chr, unsigned int charColor, unsigned int bkgColor) {
   unsigned char i;
   unsigned char j;
-  LCD_CS0;
+  CS_DN;
   lcd7735_at(x, y, x+12, y+8);
   lcd7735_sendCmd(0x2C);
 
   SPI2SIXTEEN;
-  LCD_DC1;
+  DC_UP;
 
   unsigned char k;
   for (i=0;i<7;i++)
@@ -211,8 +212,8 @@ void lcd7735_putchar(unsigned char x, unsigned char y, unsigned char chr, unsign
       while (!(SPI1->SR & SPI_SR_TXE));
       SPI1->DR = color;
     }
-  }
-  // рисуем справо от символа пустую вертикальную линию для бокового интервала
+  };
+  // рисуем справа от символа пустую вертикальную линию для бокового интервала
   for (j=0;j<13;j++)
   {
     while (!(SPI1->SR & SPI_SR_TXE));
@@ -233,6 +234,7 @@ void lcd7735_putstr(unsigned char x, unsigned char y, const unsigned char str[],
     str++;
   }
 }
+
 
 void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
