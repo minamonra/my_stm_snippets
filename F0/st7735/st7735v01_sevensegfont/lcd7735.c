@@ -235,7 +235,11 @@ void lcd7735_putstr(unsigned char x, unsigned char y, const unsigned char str[],
   }
 }
 
-
+// Семисегментный шрифт 50х32. 
+// Этот шрифт устроен так: 50 строк -0...49 сверху вниз, 
+// В каждой строке 4 байта. Нумерация байтов 0...3 слева на право. 
+// Нумерация битов в байте 7...0 слева на право. 
+// В программе b-это байты, i-строки, j-биты. 
 void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
   uint16_t d1, color;
