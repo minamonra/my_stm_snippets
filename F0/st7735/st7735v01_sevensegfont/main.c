@@ -8,6 +8,8 @@
 #include "Grotesk24x48.h"
 //#include "Inconsola.h"
 
+/// Шрифты отсюда http://rinkydinkelectronics.com/r_fonts.php
+
 void print_char_24x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
   uint16_t d1, color;
