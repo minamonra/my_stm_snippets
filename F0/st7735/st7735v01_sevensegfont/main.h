@@ -51,6 +51,7 @@ void delay_ms(uint32_t ms)
   while(ddms) {};
 }
 
+//https://github.com/eddyem/stm32samples/blob/master/F0%3AF030%2CF042%2CF072/NUCLEO_SPI/spi.c
 void spi_init(void)
 {
   // SCK PB3
@@ -73,6 +74,8 @@ void spi_init(void)
   
   SPI1->CR2 |= SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0; // 8-bit
 
+  // SPI1->CR1 &= ~(SPI_CR1_RXONLY);	
+  // SPI1->CR1 |= SPI_CR2_FRF;
   SPI1->CR1 |= SPI_CR1_SPE; // Go
 }
 
