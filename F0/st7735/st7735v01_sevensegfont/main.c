@@ -63,7 +63,7 @@ void print_char_24x48_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, ui
   uint8_t j, i, b, d;
   uint16_t d1, color;
   CS_DN;
-  lcd7735_at(X, Y, X + 47, Y + 23); // 24 x 32 с поворотом
+  lcd7735_at(X, Y, X + 47, Y + 23); // 24 x 48
   lcd7735_sendCmd(0x2C);
   SPI2SIXTEEN;
   DC_UP;
