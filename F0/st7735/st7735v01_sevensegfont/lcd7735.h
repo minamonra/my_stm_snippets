@@ -58,5 +58,7 @@ void LCD7735_dec(unsigned int numb, unsigned char dcount, unsigned char x, unsig
 
 void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
 void print_char_50x32_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
+void print_char_32x46_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
+void print_char_32x46_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
 
 #endif // __LCD_ST7735__

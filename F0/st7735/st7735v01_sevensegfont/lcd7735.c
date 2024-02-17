@@ -289,4 +289,56 @@ void print_char_50x32_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, ui
   SPI2EIGHT;
 }
 
+#include "SevenSegNumFontPCMDS.h"
+// 32x46
+void print_char_32x46_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
+  uint8_t j, i, b, d;
+  uint16_t d1, color;
+  CS_DN;
+  lcd7735_at(X, Y, X + 31, Y + 45);
+  lcd7735_sendCmd(0x2C);
+  SPI2SIXTEEN;
+  DC_UP;
+  for (b = 0; b < 46; b++) {
+    for (i = 0; i < 4; i++) {
+      for (j = 8; j > 0; j--) {
+        d1 = (CH)*184 + (b * 4 + i);
+        d = SevenSegNumFontPCMDS[d1];
+        if (d & (1 << (j - 1))) color = fcolor; else color = bcolor;
+        d = d << 1;
+        while (!(SPI1->SR & SPI_SR_TXE)){};
+        SPI1->DR = color;
+      }
+    }
+  }
+  while (!(SPI1->SR & SPI_SR_TXE) || (SPI1->SR & SPI_SR_BSY)){};
+  CS_UP;
+  SPI2EIGHT;
+}
+
+void print_char_32x46_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
+  uint8_t j, i, b, d;
+  uint16_t d1, color;
+  CS_DN;
+  lcd7735_at(X, Y, X + 45, Y + 31); // Set window
+  lcd7735_sendCmd(0x2C);
+  SPI2SIXTEEN;
+  DC_UP;
+  for (i = 0; i < 4; i++) {
+    for (j = 8; j > 0; j--) {
+      for (b = 46; b > 0; b--) {
+        d1 = (CH)*184 + ((b - 1) * 4 + i);
+        d = SevenSegNumFontPCMDS[d1];
+        if (d & (1 << (j - 1))) color = fcolor; else color = bcolor;
+        while (!(SPI1->SR & SPI_SR_TXE)){};
+        SPI1->DR = color;
+      }
+    }
+  }
+  while (!(SPI1->SR & SPI_SR_TXE) || (SPI1->SR & SPI_SR_BSY)){};
+  CS_UP;
+  SPI2EIGHT;
+}
+
+
 #endif // __LCD7735_H__
