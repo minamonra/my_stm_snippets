@@ -56,9 +56,10 @@ void lcd7735_putchar(unsigned char x, unsigned char y, unsigned char chr, unsign
 void lcd7735_putstr(unsigned char x, unsigned char y, const unsigned char str[], unsigned int charColor, unsigned int bkgColor); // вывод строки в цвете по координатам
 void LCD7735_dec(unsigned int numb, unsigned char dcount, unsigned char x, unsigned char y,unsigned int fntColor, unsigned int bkgColor); // печать десятичного числа
 
-void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
-void print_char_50x32_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
+void print_char_32x50_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
+void print_char_32x50_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
 void print_char_32x46_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
 void print_char_32x46_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor);
+
 
 #endif // __LCD_ST7735__

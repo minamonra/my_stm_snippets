@@ -4,6 +4,7 @@
 #include "lcd7735.h"      // объявления модуля
 #include "font7x15.h"	  // шрифт
 #include "SevenSegNumFont.h"
+#include "SevenSegNumFontPCMDS.h"
 
 extern void delay_ms(uint32_t ms);
 #define SPIDR8BIT (*(__IO uint8_t *)((uint32_t)&SPI1->DR))
@@ -240,7 +241,9 @@ void lcd7735_putstr(unsigned char x, unsigned char y, const unsigned char str[],
 // В каждой строке 4 байта. Нумерация байтов 0...3 слева на право. 
 // Нумерация битов в байте 7...0 слева на право. 
 // В программе b-это байты, i-строки, j-биты. 
-void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
+
+
+void print_char_32x50_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
   uint16_t d1, color;
   CS_DN;
@@ -264,7 +267,7 @@ void print_char_50x32_land(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, ui
   SPI2EIGHT;
 }
 
-void print_char_50x32_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
+void print_char_32x50_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
   uint16_t d1, color;
   CS_DN;
@@ -289,7 +292,7 @@ void print_char_50x32_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, ui
   SPI2EIGHT;
 }
 
-#include "SevenSegNumFontPCMDS.h"
+
 // 32x46
 void print_char_32x46_port(uint8_t CH, uint8_t X, uint8_t Y, uint16_t fcolor, uint16_t bcolor) {
   uint8_t j, i, b, d;
