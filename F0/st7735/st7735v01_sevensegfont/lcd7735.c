@@ -1,8 +1,8 @@
 #ifndef __LCD7735_H__
 #define __LCD7735_H__
 
-#include "lcd7735.h"      // объявления модуля
-#include "font7x15.h"	  // шрифт
+#include "lcd7735.h" // объявления модуля
+#include "font7x15.h" // шрифт
 #include "SevenSegNumFont.h"
 #include "SevenSegNumFontPCMDS.h"
 

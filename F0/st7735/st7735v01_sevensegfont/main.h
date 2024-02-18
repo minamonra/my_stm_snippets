@@ -51,7 +51,7 @@ void delay_ms(uint32_t ms)
   while(ddms) {};
 }
 
-//https://github.com/eddyem/stm32samples/blob/master/F0%3AF030%2CF042%2CF072/NUCLEO_SPI/spi.c
+
 void spi_init(void)
 {
   // SCK PB3
