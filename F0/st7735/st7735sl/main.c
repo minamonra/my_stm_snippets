@@ -3,6 +3,7 @@
 #include "lcd7735sl.h"
 #include "SixteenSegment16x24.h"
 #include "SixteenSegment24x36.h"
+#include "Arial_round_16x24.h"
 int main(void) 
 {
   rcc_sysclockinit();
@@ -19,6 +20,8 @@ int main(void)
   const unsigned int  *Fidx = SixteenSegment24x36idx;
   // const unsigned char *Font = SixteenSegment16x24;
   // const unsigned int  *Fidx = SixteenSegment16x24dx;
+  // const unsigned char *Font = Arial_round_16x24;
+  // const unsigned int  *Fidx = Arial_round_16x24idx;
 
 
   do // do main 
