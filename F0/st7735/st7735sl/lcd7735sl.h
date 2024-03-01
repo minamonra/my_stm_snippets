@@ -82,7 +82,19 @@ void lcd7735pixel(unsigned char X, unsigned char Y, unsigned int color);
 void st7735fillrect(unsigned char startX, unsigned char startY, unsigned char stopX, unsigned char stopY, unsigned int color);
 // процедура рисования линии
 void st7735line(unsigned char x1, unsigned char y1, unsigned char x2, unsigned char y2, unsigned int color);
-void print_char_sl(unsigned char CH,            // символ который выводим
+
+// forward bits
+void print_char_sl_fb(unsigned char CH,            // символ который выводим
+                unsigned char X, unsigned char Y, // координаты
+                unsigned char SymbolWidth,        // ширина символа
+                unsigned char SymbolHeight,       // высота символа
+                unsigned char MatrixLength,       // длина матрицы символа
+                const unsigned char font[],       // шрифт
+                const unsigned int index[],       // индексный массив шрифта
+                unsigned int fcolor,              // цвет шрифта
+                unsigned int bcolor);             // цвет фона
+// reverse bits
+void print_char_sl_rb(unsigned char CH,            // символ который выводим
                 unsigned char X, unsigned char Y, // координаты
                 unsigned char SymbolWidth,        // ширина символа
                 unsigned char SymbolHeight,       // высота символа
