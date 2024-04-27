@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 const int PIN_RS = PB0;
-const int PIN_E = PB3;
+const int PIN_E  = PB3;
 const int PIN_D4 = PB4;
 const int PIN_D5 = PB5;
 const int PIN_D6 = PB6;

@@ -25,7 +25,7 @@ volatile uint32_t pc13ms = 0;
 #define CRL(pin, cnfmode)  ((cnfmode) << (pin*4))
 #define CRH(pin, cnfmode)  ((cnfmode) << ((pin-8)*4))
 
-static void StartHSE()
+static void StartHSE(void)
 {
   __IO uint32_t StartUpCounter = 0;
   // SYSCLK, HCLK, PCLK2 and PCLK1 configuration
@@ -71,23 +71,17 @@ static void hardware_init(void)
 
   if (SysTick_Config(72000)) { while(1); } // конфигурация SysTick = 1ms при тактовой 72MHz
   SysTick->LOAD |= SysTick_CTRL_ENABLE;    // включить SysTick
+
   // LED PC13
   GPIOC->CRH &= ~GPIO_CRH_CNF13;
-  //GPIOC->CRH |= GPIO_CRH_MODE13_0;
-  //GPIOC->CRH |= CRH(13, CNF_PPOUTPUT | MODE_FAST);
   GPIOC->CRH |= CRH(13, CNF_PPOUTPUT | MODE_NORMAL);
-
   // PB0
   //GPIOB->CRL &= ~GPIO_CRL_CNF0;
   GPIOB->CRL &= ~GPIO_CRL_CNF0;
-  //GPIOB->CRL |=  GPIO_CRL_MODE0_0;
   GPIOB->CRL |= CRL(0, CNF_PPOUTPUT | MODE_NORMAL);
   // PB3
-  //GPIOB->CRL &= ~GPIO_CRL_CNF3;
-  
-  GPIOB->CRL &= ~GPIO_CRL_CNF3;	  // Сбрасываем биты CNF для бита 5. Режим 00 - Push-Pull 
+  GPIOB->CRL &= ~GPIO_CRL_CNF3;	  // Сбрасываем биты CNF
   GPIOB->CRL |= CRL(3, CNF_PPOUTPUT | MODE_NORMAL);
-  //GPIOB->CRL |=  GPIO_CRL_MODE3_0; // Выставляем бит MODE0 для пятого пина. Режим MODE01 = Max Speed 10MHz
   // PB4
   GPIOB->CRL &= ~GPIO_CRL_CNF4;
   GPIOB->CRL |= CRL(4, CNF_PPOUTPUT | MODE_NORMAL);
@@ -108,6 +102,7 @@ void SysTick_Handler(void)
   ++ttms;
   if (ddms) ddms--;
 }
+
 void blink_pc13led(uint16_t freq)
 {
   if (pc13ms > ttms || ttms - pc13ms > freq)
@@ -197,10 +192,9 @@ int main(void) {
   lcdString("LCD directly! :)");
   
   do {
-  //blink_pc13led(199);
-  delay_ms(399);
-  //delay_us(88000); 
-  LEDTOGGLE;
+  
+    blink_pc13led(199);
+  
   } while (1);
 }
 // ============================================================EoF=== //
