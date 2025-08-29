@@ -1,12 +1,12 @@
 //https://eax.me/hd44780-protocol
 #include <Arduino.h>
 
-const int PIN_RS = PB0;
-const int PIN_E  = PB3;
+const int PIN_RS = PA15;//PB0;
+const int PIN_E  = PB3;//PB3;
 const int PIN_D4 = PB4;
 const int PIN_D5 = PB5;
-const int PIN_D6 = PB6;
-const int PIN_D7 = PB7;
+const int PIN_D6 = PB8;//PB6;
+const int PIN_D7 = PB9;//PB7;
 
 const int LCD_DELAY_MS = 5;
 

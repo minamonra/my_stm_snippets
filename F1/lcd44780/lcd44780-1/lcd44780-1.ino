@@ -11,25 +11,21 @@ const int PIN_D7 = PB9;
 const int LCD_DELAY_MS = 1;
 
 void lcdSend(uint8_t isCommand, uint8_t data) {
-
   if (isCommand == 1) digitalWrite(PIN_RS, LOW); else digitalWrite(PIN_RS, HIGH);
   delay(LCD_DELAY_MS);
   if (data&0x080) digitalWrite(PIN_D7, HIGH); else digitalWrite(PIN_D7, LOW);
   if (data&0x040) digitalWrite(PIN_D6, HIGH); else digitalWrite(PIN_D6, LOW);
   if (data&0x020) digitalWrite(PIN_D5, HIGH); else digitalWrite(PIN_D5, LOW);
   if (data&0x010) digitalWrite(PIN_D4, HIGH); else digitalWrite(PIN_D4, LOW);
-
   // Wnen writing to the display, data is transfered only
   // on the high to low transition of the E signal.
   digitalWrite(PIN_E, HIGH);
   delay(LCD_DELAY_MS);
   digitalWrite(PIN_E, LOW);
-
   if (data&0x08) digitalWrite(PIN_D7, HIGH); else digitalWrite(PIN_D7, LOW);
   if (data&0x04) digitalWrite(PIN_D6, HIGH); else digitalWrite(PIN_D6, LOW);
   if (data&0x02) digitalWrite(PIN_D5, HIGH); else digitalWrite(PIN_D5, LOW);
   if (data&0x01) digitalWrite(PIN_D4, HIGH); else digitalWrite(PIN_D4, LOW);
-
   digitalWrite(PIN_E, HIGH);
   delay(LCD_DELAY_MS);
   digitalWrite(PIN_E, LOW);
@@ -49,20 +45,17 @@ void lcdString(const char* str) {
     str++;
   }
 }
+
 void setCursor(char x, char y) {
-
   uint8_t base = 0;
-
   if(y==1) {
     base = 0x40;
   }else {
     base = 0;
   }
-
   lcdCommand( 0x80 | (base + x));
-
-
 }
+
 void setup() {
   afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
   pinMode(PIN_RS, OUTPUT);
@@ -74,9 +67,9 @@ void setup() {
 
   // 4-bit mode, 2 lines, 5x7 format
   lcdCommand(0b00110000);
-//  lcdCommand(0x00);
-//  lcdCommand(0x08);
-//  lcdCommand(0x80);
+  //  lcdCommand(0x00);
+  //  lcdCommand(0x08);
+  //  lcdCommand(0x80);
   //lcdCommand(30);
   // display & cursor home (keep this!)
   lcdCommand(0b00000010);
