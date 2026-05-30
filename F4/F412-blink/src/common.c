@@ -68,18 +68,162 @@ static void gpio_init(void) {
     __asm("nop");                                                               // Пауза для стабилизации тактов
 
     // Настройка системного светодиода PB2 на вывод
-    GPIOB->MODER   &= ~GPIO_MODER_MODER2;    // Очищаем оба бита настройки пина PB2 (в 00)
-    GPIOB->MODER   |=  GPIO_MODER_MODER2_0;   // Выставляем режим вывода (General purpose output: 01)
-    GPIOB->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2; // Сбрасываем скорость в Low speed (00)
+    GPIOB->MODER   &= ~GPIO_MODER_MODER2;                                       // Очищаем оба бита настройки пина PB2 (в 00)
+    GPIOB->MODER   |=  GPIO_MODER_MODER2_0;                                     // Выставляем режим вывода (General purpose output: 01)
+    GPIOB->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;                                  // Сбрасываем скорость в Low speed (00)
 
-    // 3. Настройка пина реле PC13 на вывод
-    GPIOC->MODER   &= ~GPIO_MODER_MODER13;                                      // Очищаем оба бита настройки пина PC13 (в 00)
-    GPIOC->MODER   |=  GPIO_MODER_MODER13_0;                                    // Выставляем режим вывода (General purpose output: 01)
-    GPIOC->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR13;                                 // Сбрасываем скорость в Low speed (00)
+    // Исправленная настройка кнопки PC13 на чистый Вход (No Pull-up, No Pull-down)
+    GPIOC->MODER   &= ~GPIO_MODER_MODER13;                                      // Режим: Вход (00)
+    GPIOC->PUPDR   &= ~GPIO_PUPDR_PUPDR13;                                      // Сбрасываем в 00 (No pull)
 }
 
 // Главная публичная функция инициализации
 void System_Init(void) {
     system_clock_config_100MHz();                                               // Настраиваем клок и SysTick внутри модуля
     gpio_init();                                                                // Настраиваем порты внутри модуля
+}
+
+// --- НЕБЛОКИРУЮЩИЙ АВТОМАТ МОРЗЯНКИ ---
+// Структура для кодирования одного символа Морзе в 1 байт
+typedef struct {
+    uint8_t len;                                                                // Количество элементов (точек и тире) в символе
+    uint8_t code;                                                               // Битовая маска (0 - точка, 1 - тире), выровненная вправо
+} MorseChar_t;
+
+// Таблица Морзе: индексы 0..25 соответствуют буквам A..Z
+static const MorseChar_t morse_alphabet[] = {
+    {2, 0b01},    // A (.-)
+    {4, 0b1000},  // B (-...)
+    {4, 0b1010},  // C (-.-.)
+    {3, 0b100},   // D (-..)
+    {1, 0b0},     // E (.)
+    {4, 0b0010},  // F (..-.)
+    {3, 0b110},   // G (--.)
+    {4, 0b0000},  // H (....)
+    {2, 0b00},    // I (..)
+    {4, 0b0111},  // J (.---)
+    {3, 0b101},   // K (-.-)
+    {4, 0b0100},  // L (.-..)
+    {2, 0b11},    // M (--)
+    {2, 0b10},    // N (-.)
+    {3, 0b111},   // O (---)
+    {4, 0b0110},  // P (.--.)
+    {4, 0b1101},  // Q (--.-)
+    {3, 0b010},   // R (.-.)
+    {3, 0b000},   // S (...)
+    {1, 0b1},     // T (-)
+    {3, 0b001},   // U (..-)
+    {4, 0b0001},  // V (...-)
+    {3, 0b011},   // W (.--)
+    {4, 0b1001},  // X (-..-)
+    {4, 0b1011},  // Y (-.--)
+    {4, 0b1100}   // Z (--..)
+};
+
+// Таблица Морзе: индексы 0..9 соответствуют цифрам 0..9
+static const MorseChar_t morse_numbers[] = {
+    {5, 0b11111}, // 0 (-----)
+    {5, 0b01111}, // 1 (.----)
+    {5, 0b00111}, // 2 (..---)
+    {5, 0b00011}, // 3 (...--)
+    {5, 0b00001}, // 4 (....-)
+    {5, 0b00000}, // 5 (.....)
+    {5, 0b10000}, // 6 (-....)
+    {5, 0b11000}, // 7 (--...)
+    {5, 0b11100}, // 8 (---..)
+    {5, 0b11110}  // 9 (----.)
+};
+
+// --- ПОЛНОСТЬЮ УНИВЕРСАЛЬНЫЙ НЕБЛОКИРУЮЩИЙ АВТОМАТ МОРЗЯНКИ ---
+void morse_send_nb(const char* str) {
+    static enum { IDLE, NEXT_CHAR, SIGNAL_START, SIGNAL_HOLD, AP_GAP } state = IDLE;
+    static const char* ptr = NULL;
+    static uint32_t last_morse_time = 0;
+    static uint32_t wait_duration = 0;
+    static uint8_t morse_code = 0;
+    static uint8_t morse_len = 0;
+
+    // Сброс автомата извне при передаче NULL
+    if (str == NULL) {
+        LED_SYSTEM_OFF;
+        state = IDLE;
+        return;
+    }
+
+    if (state == IDLE) {
+        ptr = str;
+        state = NEXT_CHAR;
+        last_morse_time = ttms;
+        return;
+    }
+
+    switch (state) {
+        case NEXT_CHAR:
+            if (*ptr == '\0') {                                                 // Строка закончилась — пускаем её по кругу
+                ptr = str;
+            }
+            char c = *ptr++;
+            
+            // Переводим символ в верхний регистр
+            if (c >= 'a' && c <= 'z') c -= 32;
+
+            if (c >= 'A' && c <= 'Z') {
+                // Извлекаем конфигурацию символа из алфавитного массива
+                morse_code = morse_alphabet[c - 'A'].code;
+                morse_len  = morse_alphabet[c - 'A'].len;
+            } 
+            else if (c >= '0' && c <= '9') {
+                // Извлекаем конфигурацию из массива цифр
+                morse_code = morse_numbers[c - '0'].code;
+                morse_len  = morse_numbers[c - '0'].len;
+            } 
+            else if (c == ' ') {
+                // Пауза между словами (7 точек = 700 мс)
+                wait_duration = 700;
+                last_morse_time = ttms;
+                state = AP_GAP;
+                return;
+            } 
+            else {
+                state = NEXT_CHAR;                                              // Игнорируем знаки препинания и неизвестные символы
+                return;
+            }
+
+            state = SIGNAL_START;
+            break;
+
+        case SIGNAL_START:
+            if (morse_len == 0) {
+                wait_duration = 300;                                            // Пауза между буквами в слове (3 точки = 300 мс)
+                last_morse_time = ttms;
+                state = AP_GAP;
+                break;
+            }
+
+            // Выделяем текущий бит маски (смотрим с конца)
+            uint8_t is_dash = (morse_code >> (morse_len - 1)) & 1U;
+            morse_len--;
+
+            LED_SYSTEM_ON;                                                      // Зажигаем светодиод без использования delay
+            wait_duration = is_dash ? 300 : 100;                                // Длительность: Тире = 300 мс, Точка = 100 мс
+            last_morse_time = ttms;
+            state = SIGNAL_HOLD;
+            break;
+
+        case SIGNAL_HOLD:
+            if (ttms - last_morse_time >= wait_duration) {
+                LED_SYSTEM_OFF;                                                 // Время удержания сигнала вышло — гасим диод
+                wait_duration = 100;                                            // Пауза между элементами одной буквы (1 точка = 100 мс)
+                last_morse_time = ttms;
+                state = AP_GAP;
+            }
+            break;
+
+        case AP_GAP:
+            if (ttms - last_morse_time >= wait_duration) {
+                // Если буква не закончилась — шлем следующую точку/тире, иначе переходим к новой букве
+                state = (morse_len > 0) ? SIGNAL_START : NEXT_CHAR;
+            }
+            break;
+    }
 }
