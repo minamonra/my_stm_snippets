@@ -2,11 +2,9 @@
 #include "pindefs.h"
 
 int main(void) {
-    system_clock_config_100MHz();   // Запуск ядра на 100 МГц и SysTick
-    gpio_init();                   // Настройка периферии GPIO
+    System_Init();   
 
     while(1) {
-        LED_SYSTEM_TOGGLE;         // Мигаем системным диодом
-        delay_ms(500);             // Спим 500 миллисекунд
+        blink_led(500);                                                         // Мигаем светодиодом каждые 500 мс
     }
 }

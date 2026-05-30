@@ -5,12 +5,12 @@
 
 extern volatile uint32_t ttms;
 
-// Системные функции задержки
+// Системные функции задержки и времени
 void delay_ms(uint32_t ms);
 void delay_nop(uint32_t ticks);
+void blink_led(uint16_t freq);
 
-// Функции инициализации
-void system_clock_config_100MHz(void);
-void gpio_init(void);
+// Единственная точка входа для инициализации всего железа
+void System_Init(void);
 
 #endif // COMMON_H
