@@ -158,6 +158,7 @@ void morse_send_nb(const char* str) {
     }
 
     switch (state) {
+        case IDLE: break;
         case NEXT_CHAR:
             if (*ptr == '\0') {                                                 // Строка закончилась — пускаем её по кругу
                 ptr = str;
