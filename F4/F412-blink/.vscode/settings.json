@@ -1,0 +1,9 @@
+{
+    "cortex-debug.openocdPath": "openocd",
+    "cortex-debug.armToolchainPath": "",
+    "files.associations": {
+        "*.s": "arm"
+    },
+    "cortex-debug.variableUseNaturalFormat": false,
+    "cSpell.enabled": false
+}
