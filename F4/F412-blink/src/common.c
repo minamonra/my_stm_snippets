@@ -30,51 +30,105 @@ void blink_led(uint16_t freq) {
     }
 }
 
+#define DEBUG  // Закомментируй эту строчку, если отладка осциллографом на PA8 больше не нужна
+
 static void system_clock_config_100MHz(void) {
-    RCC->CR |= RCC_CR_HSEON;                                                    // Включаем внешний кварцевый резонатор HSE (25 МГц)
-    while (!(RCC->CR & RCC_CR_HSERDY));                                         // Ожидаем стабилизации тактового сигнала от HSE
+    // 1. Включаем внутренний генератор HSI для безопасной коммутации шин
+    RCC->CR |= RCC_CR_HSION;
+    while (!(RCC->CR & RCC_CR_HSIRDY));
 
-    // Для частоты 100 МГц при питании 3.3В по даташиту требуется 3 цикла ожидания Flash (3WS)
-    FLASH->ACR = FLASH_ACR_LATENCY_3WS | FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN; // Настройка задержки Flash, включение префетча и кэша инструкций/данных
+    // Переводим систему временно на безопасный HSI
+    RCC->CFGR &= ~RCC_CFGR_SW;
+    RCC->CFGR |= RCC_CFGR_SW_HSI;
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
 
-    RCC->CFGR &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2);            // Очищаем старые делители системных шин AHB, APB1 и APB2
-    RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;                                           // Делитель APB1 равен 2 (Частота шины периферии APB1 = 50 МГц, максимум 50)
-    RCC->CFGR |= RCC_CFGR_PPRE2_DIV1;                                           // Делитель APB2 равен 1 (Частота шины периферии APB2 = 100 МГц, максимум 100)
+    // 2. Включаем внешний кварцевый резонатор HSE (8 МГц)
+    RCC->CR |= RCC_CR_HSEON;
+    uint32_t startup_counter = 0;
+    while (!(RCC->CR & RCC_CR_HSERDY)) {
+        startup_counter++;
+        if (startup_counter > 0x10000) {
+            // Аварийный выход на HSI, если кварц не завелся
+            RCC->PLLCFGR = (16U << RCC_PLLCFGR_PLLM_Pos) | (200U << RCC_PLLCFGR_PLLN_Pos) | (0U << RCC_PLLCFGR_PLLP_Pos) | (4U << RCC_PLLCFGR_PLLQ_Pos) | 0U;
+            goto pll_start;
+        }
+    }
 
-    // Конфигурация умножителя PLL: Вход 25 МГц / M(25) * N(200) / P(2) = 100 МГц системной частоты
-    RCC->PLLCFGR = (25 << RCC_PLLCFGR_PLLM_Pos) |                               // Делитель входной частоты M=25 (Приводим вход к стабильной частоте 1 МГц)
-                   (200 << RCC_PLLCFGR_PLLN_Pos) |                              // Множитель частоты генератора VCO N=200 (Получаем внутренние 200 МГц)
-                   (0 << RCC_PLLCFGR_PLLP_Pos)  |                               // Делитель системного ядра P=2 (Значение битов 00 делит VCO на 2 -> 100 МГц)
-                   (4 << RCC_PLLCFGR_PLLQ_Pos)  |                               // Делитель частоты для USB/SDIO Q=4 (Дает ровно необходимые 48 МГц)
-                   RCC_PLLCFGR_PLLSRC_HSE;                                      // Источником опорной тактовой частоты для PLL выбираем HSE
+    // ЭТАЛОННАЯ КОНФИГУРАЦИЯ ПОД КВАРЦ 8 МГц ДЛЯ ЧЕСТНЫХ 100 МГц ЯДРА:
+    // Вход 8 МГц / M(8) = 1 МГц.
+    // 1 МГц * N(200) = 200 МГц — внутренняя частота генератора VCO.
+    // 200 МГц / P(2) = 100 МГц — номинальная скорость процессора SYSCLK!
+    RCC->PLLCFGR = (8U << RCC_PLLCFGR_PLLM_Pos)    |                            // Делитель M = 8 (Входной сигнал приводим к 1 МГц)
+                   (200U << RCC_PLLCFGR_PLLN_Pos)  |                            // Множитель VCO N = 200
+                   (0U << RCC_PLLCFGR_PLLP_Pos)    |                            // Делитель ядра P = 2 (биты 00 дают деление на 2 -> 100 МГц)
+                   (4U << RCC_PLLCFGR_PLLQ_Pos)    |                            // Делитель Q = 4
+                   RCC_PLLCFGR_PLLSRC_HSE;                                      // Источник — внешний кварц HSE
 
-    RCC->CR |= RCC_CR_PLLON;                                                    // Включаем основной блок умножителя частоты PLL
-    while (!(RCC->CR & RCC_CR_PLLRDY));                                         // Ожидаем стабилизации и захвата частоты генератором PLL
+pll_start:
+    // 3. Настройка задержек Flash памяти под финальные 100 МГц (3 цикла ожидания WS)
+    FLASH->ACR = FLASH_ACR_LATENCY_3WS | FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN;
 
-    RCC->CFGR |= RCC_CFGR_SW_PLL;                                               // Переключаем тактирование процессора (SYSCLK) на выходной сигнал PLL
-    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);                     // Ожидаем от аппаратного контроллера подтверждения перехода на PLL
+    // 4. Запускаем умножитель частоты PLL
+    RCC->CR |= RCC_CR_PLLON;
+    while (!(RCC->CR & RCC_CR_PLLRDY));                                         // Жестко ждем стабилизации частоты PLL
 
-    // Ручной запуск системного таймера SysTick на прерывания каждые 1 мс
-    SysTick->LOAD = (F_CPU / 1000) - 1;                                         // Задаем период перезагрузки счетчика на основе частоты из Makefile
-    SysTick->VAL  = 0;                                                          // Принудительно обнуляем текущее значение счетчика SysTick
-    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |                                // Задаем источник тактов — полная частота процессора без делителей
-                    SysTick_CTRL_TICKINT_Msk   |                                // Разрешаем генерацию прерывания SysTick_Handler при обнулении
-                    SysTick_CTRL_ENABLE_Msk;                                    // Включаем системный таймер SysTick в работу
+    // 5. Настройка делителей системных шин периферии
+    RCC->CFGR &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2);            
+    RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;                                           // APB1 = 50 МГц (Максимум шины)
+    RCC->CFGR |= RCC_CFGR_PPRE2_DIV1;                                           // APB2 = 100 МГц (Максимум шины, тут наш SPI1!)
+
+    // 6. Переключаем тактирование процессора (SYSCLK) на выходной сигнал PLL
+    RCC->CFGR &= ~RCC_CFGR_SW;                                                  
+    RCC->CFGR |= RCC_CFGR_SW_PLL;                                               
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);                     // Ждем от аппаратного переключателя подтверждения перехода
+
+#ifdef DEBUG
+    // --- КОНТРОЛЬНЫЙ ВЫВОД СИГНАЛА НА НОЖКУ MCO1 (PA8) ---
+    RCC->CFGR &= ~RCC_CFGR_MCO1;
+    RCC->CFGR |= (3U << 21);                                                    // Выбираем источник MCO1 = PLL (0b11)
+    
+    RCC->CFGR &= ~RCC_CFGR_MCO1PRE;
+    RCC->CFGR |= (6U << 24);                                                    // Аппаратный делитель MCO1 на 4 (100 / 4 = 25.00 МГц)
+#endif
+
+    // Возвращаем SysTick на честные 100 МГц
+    SysTick->LOAD = (100000000 / 1000) - 1;
+    SysTick->VAL  = 0;
+    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }
 
+
 static void gpio_init(void) {
-    // 1. Включаем тактование необходимых портов на шине AHB1
-    RCC->AHB1ENR |= (RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN);
-    __asm("nop");                                                               // Пауза для стабилизации тактов
+    // 1. Включаем тактование портов на шине AHB1 (ОБЯЗАТЕЛЬНО добавляем GPIOAEN!)
+    RCC->AHB1ENR |= (RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN);
+    
+    // Фиктивное чтение для жесткой стабилизации тактов на шине AHB1
+    volatile uint32_t dummy = RCC->AHB1ENR; 
+    (void)dummy;
+    __asm("nop");
 
-    // Настройка системного светодиода PB2 на вывод
-    GPIOB->MODER   &= ~GPIO_MODER_MODER2;                                       // Очищаем оба бита настройки пина PB2 (в 00)
-    GPIOB->MODER   |=  GPIO_MODER_MODER2_0;                                     // Выставляем режим вывода (General purpose output: 01)
-    GPIOB->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;                                  // Сбрасываем скорость в Low speed (00)
+    // Настройка системного светодиода PB2 на вывод (01)
+    GPIOB->MODER   &= ~GPIO_MODER_MODER2;                                       
+    GPIOB->MODER   |=  GPIO_MODER_MODER2_0;                                     
+    GPIOB->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;                                  
 
-    // Исправленная настройка кнопки PC13 на чистый Вход (No Pull-up, No Pull-down)
-    GPIOC->MODER   &= ~GPIO_MODER_MODER13;                                      // Режим: Вход (00)
-    GPIOC->PUPDR   &= ~GPIO_PUPDR_PUPDR13;                                      // Сбрасываем в 00 (No pull)
+    // Настройка кнопки PC13 на чистый Вход (00, No pull)
+    GPIOC->MODER   &= ~GPIO_MODER_MODER13;                                      
+    GPIOC->PUPDR   &= ~GPIO_PUPDR_PUPDR13;                                      
+
+#ifdef DEBUG
+    // --- НАСТРОЙКА ПИНА PA8 ПОД ВЫВОД ТАКТОВ MCO1 ---
+    // 1. Переводим пин PA8 в режим Альтернативной Функции (биты 10)
+    GPIOA->MODER   &= ~(3U << (8 * 2));
+    GPIOA->MODER   |=  (2U << (8 * 2));
+    
+    // 2. Выставляем максимальную скорость (Very High Speed: 11), чтобы ножка тянула 24-50 МГц
+    GPIOA->OSPEEDR |=  (3U << (8 * 2));
+
+    // 3. Привязываем PA8 к альтернативной функции AF00 (MCO1)
+    GPIOA->AFR[1]  &= ~(GPIO_AFRH_AFSEL8);                                      // PA8 сидит в верхнем регистре AFR[1]
+    GPIOA->AFR[1]  |=  (0U << GPIO_AFRH_AFSEL8_Pos);                            // Записываем код AF0
+#endif
 }
 
 // Главная публичная функция инициализации
