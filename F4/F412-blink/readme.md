@@ -1,8 +1,8 @@
 Первое знакомстово с STM32F412RET6
 
-Freq:100Mhz Max
+Freq: 100Mhz Max
 
-RAM: 256KB, ROM:512KB
+RAM: 256KB, ROM: 512KB
 
 Плата WeAct 1.1
 
