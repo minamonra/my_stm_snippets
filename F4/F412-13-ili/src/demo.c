@@ -30,28 +30,28 @@ void demo_show_u8g2_font1(void) {
     
     // ============= РУССКИЙ АЛФАВИТ (прописные и строчные) =============
     lcd_draw_u8g2_string(15, 55, "РУССКИЙ: АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ", ILI9488_WHITE, ILI9488_NAVY);
-    lcd_draw_u8g2_string(15, 75, "          абвгдеёжзийклмнопрстуфхцчшщъыьэюя", ILI9488_LIGHTGREY, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 75, "         абвгдеёжзийклмнопрстуфхцчшщъыьэюя", ILI9488_LIGHTGREY, ILI9488_NAVY);
     
     // ============= ЛАТИНИЦА =============
-    lcd_draw_u8g2_string(15, 98, "LATIN:  ABCDEFGHIJKLMNOPQRSTUVWXYZ", ILI9488_GREEN, ILI9488_NAVY);
-    lcd_draw_u8g2_string(15, 118, "        abcdefghijklmnopqrstuvwxyz", ILI9488_GREEN, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 98, "LATIN:   ABCDEFGHIJKLMNOPQRSTUVWXYZ", ILI9488_GREEN, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 118, "         abcdefghijklmnopqrstuvwxyz", ILI9488_GREEN, ILI9488_NAVY);
     
     // ============= ЦИФРЫ И СПЕЦСИМВОЛЫ =============
-    lcd_draw_u8g2_string(15, 141, "DIGITS: 012345678901234567890123456789", ILI9488_CYAN, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 141, "DIGITS:  012345678901234567890123456789", ILI9488_CYAN, ILI9488_NAVY);
     lcd_draw_u8g2_string(15, 161, "SYMBOLS: !@#$%%^&*()_+-=[]{}|;:'\",.<>/?~`", ILI9488_MAGENTA, ILI9488_NAVY);
     
     // ============= ПРИКОЛЬНЫЕ ФРАЗЫ (плотно) =============
     ili9488_DrawFastHLine(15, 170, 450, ILI9488_ORANGE);
     
-    lcd_draw_u8g2_string(15, 190, "> Зачем мы здесь тут? А чтобы течь! 1337 <", ILI9488_YELLOW, ILI9488_NAVY);
-    lcd_draw_u8g2_string(15, 210, "> Чтобы течь и раздавать стиль! <", ILI9488_LIME, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 190, ">  Зачем мы здесь тут? А чтобы течь! 1337   <", ILI9488_YELLOW, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 210, ">          Чтобы течь и раздавать стиль!    <", ILI9488_LIME, ILI9488_NAVY);
     lcd_draw_u8g2_string(15, 230, "> Co6aka - 9to He geHbfu, co6aka - 9to gpyr <", ILI9488_ORANGE, ILI9488_NAVY);
-    lcd_draw_u8g2_string(15, 250, "> А если OHO pa6oTaeT, He Tporaй! (c) <", ILI9488_PINK, ILI9488_NAVY);
-    lcd_draw_u8g2_string(15, 270, "> 42 - OTBET HA ГЛАВНЫЙ ВОПРОС <", ILI9488_CYAN, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 250, "> А если OHO pa6oTaeT, He Tporaй! (c)       <", ILI9488_PINK, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 270, "> 42 - OTBET HA ГЛАВНЫЙ ВОПРОС              <", ILI9488_CYAN, ILI9488_NAVY);
     
     // ============= СТРОКА СТАТУСА (внизу) =============
     ili9488_DrawFastHLine(15, 280, 450, ILI9488_GOLD);
-    lcd_draw_u8g2_string(15, 300, "SPEED:100 MHz|SPI:50 MHz|U8G2:PORTED|DMA: OK", ILI9488_GOLD, ILI9488_NAVY);
+    lcd_draw_u8g2_string(15, 300, "SPEED:100 MHz|SPI:50 MHz| U8G2:PORTED|DMA: OK", ILI9488_GOLD, ILI9488_NAVY);
 }
 
 
