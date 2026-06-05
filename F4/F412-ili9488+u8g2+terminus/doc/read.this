@@ -1,0 +1,47 @@
+Шрифты:
+https://github.com/immortalserg/AdafruitGFXRusFonts/tree/master/FontsRus
+
+https://github.com/balmerdx/BalmerDX_VNA/blob/master/4code/src/ili/float_to_string.h
+https://github.com/RobertoBenjami/stm32_graphics_display_drivers/blob/master/Drivers/stm32f4xx/lcd_io_spi.c
+
+DEEPSEEK: ILI9488 Display Initialization Fix
+https://chat.deepseek.com/a/chat/s/9dfa1130-7985-44e1-9627-98e50651400e
+
+API Keys
+Create and manage your API keys.
+https://openrouter.ai/workspaces/default/keys
+
+PROXYAPI
+https://console.proxyapi.ru/login
+
+ILI9488 CHAT GPT
+https://www.google.com/search?q=%D0%A2%D1%83%D1%82+%D1%83+%D0%BC%D0%B5%D0%BD%D1%8F+%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B0+%D0%BC%D0%B8%D0%B3%D0%B0%D0%BB%D0%BA%D0%B0+%D0%B4%D0%BB%D1%8F+f103%2C+%D0%B4%D0%B0%D0%B2%D0%B0%D0%B9+%D0%BD%D0%B0%D0%BF%D0%B8%D1%88%D0%B5%D0%BC+%D0%B4%D0%BB%D1%8F+%D0%BC%D0%B0%D0%BA%D0%B5%D1%82%D0%BA%D0%B8+weact+v1.1+stm32f412%2C+%D0%B4%D0%BB%D1%8F+%D0%BD%D0%B0%D1%87%D0%B0%D0%BB%D0%B0+%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%83+openocd+%D0%B2%D0%B8%D0%B4%D0%B8%D1%82+%D0%BB%D0%B8+%D0%BD%D0%B0%D1%88+%D0%B4%D0%B5%D0%B1%D1%83%D0%B3%D0%B3%D0%B5%D1%80+%D0%BE%D1%82%D0%BB%D0%B0%D0%B4%D0%BE%D1%87%D0%BD%D1%83%D1%8E+%D0%BF%D0%BB%D0%B0%D1%82%D1%83&newwindow=1&sca_esv=08cb2687b4d130c5&hl=ru&sxsrf=ANbL-n56KeVTjjOA6GrmUvMs1vTbwXCSsg%3A1780145521970&source=hp&ei=cd0aavufOfj4wPAPlbj_qAo&iflsig=AFdpzrgAAAAAahrrgfGt-4Vn1o1NaCXDmQ8opbyQjl0o&ved=0ahUKEwi7nO_rhuGUAxV4PBAIHRXcH6UQ4dUDCCE&uact=5&oq=%D0%A2%D1%83%D1%82+%D1%83+%D0%BC%D0%B5%D0%BD%D1%8F+%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B0+%D0%BC%D0%B8%D0%B3%D0%B0%D0%BB%D0%BA%D0%B0+%D0%B4%D0%BB%D1%8F+f103%2C+%D0%B4%D0%B0%D0%B2%D0%B0%D0%B9+%D0%BD%D0%B0%D0%BF%D0%B8%D1%88%D0%B5%D0%BC+%D0%B4%D0%BB%D1%8F+%D0%BC%D0%B0%D0%BA%D0%B5%D1%82%D0%BA%D0%B8+weact+v1.1+stm32f412%2C+%D0%B4%D0%BB%D1%8F+%D0%BD%D0%B0%D1%87%D0%B0%D0%BB%D0%B0+%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%83+openocd+%D0%B2%D0%B8%D0%B4%D0%B8%D1%82+%D0%BB%D0%B8+%D0%BD%D0%B0%D1%88+%D0%B4%D0%B5%D0%B1%D1%83%D0%B3%D0%B3%D0%B5%D1%80+%D0%BE%D1%82%D0%BB%D0%B0%D0%B4%D0%BE%D1%87%D0%BD%D1%83%D1%8E+%D0%BF%D0%BB%D0%B0%D1%82%D1%83&gs_lp=Egdnd3Mtd2l6IvgB0KLRg9GCINGDINC80LXQvdGPINC90LDQv9C40YHQsNC90LAg0LzQuNCz0LDQu9C60LAg0LTQu9GPIGYxMDMsINC00LDQstCw0Lkg0L3QsNC_0LjRiNC10Lwg0LTQu9GPINC80LDQutC10YLQutC4IHdlYWN0IHYxLjEgc3RtMzJmNDEyLCDQtNC70Y8g0L3QsNGH0LDQu9CwINC60L7QvNCw0L3QtNGDIG9wZW5vY2Qg0LLQuNC00LjRgiDQu9C4INC90LDRiCDQtNC10LHRg9Cz0LPQtdGAINC-0YLQu9Cw0LTQvtGH0L3Rg9GOINC_0LvQsNGC0YNIg46EAVCM8gRYlYeEAXAHeACQAQGYAYkCoAHhOKoBBjg1LjEuMbgBA8gBAPgBAZgCEKACvAioAgXCAg0QIxieBhjwBRjqAhgnwgINECMY8AUYngYY6gIYJ8ICERAAGIAEGLEDGIMBGJ4GGPAFwgILEAAYgAQYngYY8AXCAg4QABiABBixAxieBhjwBcICFBAAGIAEGIoFGLEDGIMBGJ4GGPAFwgINEAAYgAQYChieBhjwBZgDV5IHBDE1LjGgB6lpsgcEMTEuMbgHpAjCBwYyLTE0LjLIB0uACAE&sclient=gws-wiz&aep=107&cs=0&mstk=AUtExfCPf1RzHqv8q5ZZBe3UrpmQ_joWpgQpQpGINRRWRhHEHYnI0Fpf6qc4TTCZa7wuTStm74X1okQ-8g5oSuU8IR2DSpT2Jj1h7cSAB0ipEmIH26Pu0giDpkmHyw2KxKUb8Izcf8Cpq7wS1CVknbfmna_a-FG6r7CJ5HWIHP9osiETB0SLHENqCR3OsaE4VLKHdTyciI8fGlZEu4jhqhCqyOS_UE2b1lRt4oYtd2-YkFtgcq5S0xLreV1TMTUGiE3yzYLz3ObUhVMvRSe39e8Bx1-VavND9G0ynd1SRKIQoWQCxVhL_4iLTCkwTgp8zUFvdQ6vIYSUQEkUDoA&csuir=1&mtid=6eUaasDNDJvxwPAPwMGBGA&lns_mode=cvst&udm=50
+
+WeActStudio.STM32F4_64Pin_CoreBoard
+https://github.com/WeActStudio/WeActStudio.STM32F4_64Pin_CoreBoard
+
+https://disk.yandex.ru/client/disk/routeinf
+
+https://ozon.ru/t/5U01wQX
+https://github.com/sdima1357/stm32f401ccAudioNative
+
+Для ILI9488 предел на 50МГц - 13FPS
+
+U8G2 Шрифты
+https://github.com/olikraus/u8g2/wiki/fntlist16
+https://github.com/olikraus/u8g2/wiki/fntgrpx11
+Клаус
+https://github.com/olikraus/u8g2/tree/master/csrc
+Пример
+https://github.com/leechwort/u8g2-stm32-example
+Хабр
+https://habr.com/ru/companies/otus/articles/899908/
+
+Тут не помню что заинтересовало
+https://github.com/EmberGL-org/EmberGL
+
+Это драйвера дисплеев для STM32
+https://github.com/RobertoBenjami/stm32_graphics_display_drivers/tree/master/Drivers
+
+Русские шрифты Adafruit
+https://github.com/immortalserg/AdafruitGFXRusFonts/blob/master/FontsRus/FreeSansBold14.h
