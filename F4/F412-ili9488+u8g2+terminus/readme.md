@@ -10,3 +10,4 @@
 bdfconv.exe -v -f 1 -m "32-127,1024-1119" ter-u28b.bdf -n u8g2_font_terminus_28b_cyr -o terminus_u28b_cyr.c
 ```
 
+![ILI9488 Terminus Font Demo](2026-06-05-15-01-43-589.jpg)
