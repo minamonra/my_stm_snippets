@@ -1,3 +1,25 @@
+#ifndef SHUFFLE_PLAYER_H
+#define SHUFFLE_PLAYER_H
+
+
+#include <stdint.h>
+
+#define MAX_TRACKS 255
+
+void shuffle_player_init(void);
+void shuffle_player_process(void);
+
+// Функции управления плеером
+void shuffle_player_play_pause(void);
+void shuffle_player_next(void);
+void shuffle_player_prev(void);
+void shuffle_player_switch_directory(void);
+
+#endif // SHUFFLE_PLAYER_H
+
+
+/*
+// main для простого плеера:
 #include "stm32f4xx.h"
 #include "common.h"
 #include "shuffle_player.h"
@@ -14,3 +36,4 @@ int main(void) {
     shuffle_player_process();  // Основная логика плеера
   }
 }
+*/

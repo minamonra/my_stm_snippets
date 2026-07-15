@@ -8,9 +8,9 @@
         "${workspaceFolder}/audio",
         "${workspaceFolder}/disp",
         "${workspaceFolder}/fs",
-        "${workspaceFolder}/rapp",
         "${workspaceFolder}/src",
-        "${workspaceFolder}/u8g2x"
+        "${workspaceFolder}/u8g2x",
+        "${workspaceFolder}/shffplayer"
       ],
       "defines": [
         "STM32F412Rx",

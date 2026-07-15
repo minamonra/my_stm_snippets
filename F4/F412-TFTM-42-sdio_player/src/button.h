@@ -2,6 +2,7 @@
 #define BUTTON_H
 
 #include <stdint.h>
+#include "stm32f4xx.h"
 
 // ============================================================================
 // === КНОПКИ =================================================================
@@ -11,34 +12,28 @@
 typedef struct {
     GPIO_TypeDef* port;
     uint8_t       pin;          // номер бита 0..15
-    uint8_t       repeatEnabled; // 1 = кнопка авто-повторяет клик при удержании (для +/- и т.п.)
+    uint8_t       repeatEnabled; // 1 = кнопка авто-повторяет клик при удержании
 } Button_Pin_t;
 
-#define BTN_COUNT 5   // <-- при добавлении кнопки увеличить это число
+#define BTN_COUNT 5
 
 static const Button_Pin_t buttonPins[BTN_COUNT] = {
-    { GPIOB, 7, 1 },  // Кнопка 1
-    { GPIOB, 6, 1 },  // Кнопка 2
-    { GPIOB, 5, 0 },  // Кнопка 3
-    { GPIOB, 4, 0 },  // Кнопка 4 (JTRST по умолчанию)
-    { GPIOB, 3, 0 },  // Кнопка 5 (JTDO по умолчанию)
-    // Добавление 6-й кнопки:
-    // { GPIOB, 2, 0 },  // Кнопка 6
-    // и увеличить BTN_COUNT до 6
+    { GPIOB, 7, 1 },  // Кнопка 1 - ПРЕДЫДУЩИЙ ТРЕК
+    { GPIOB, 6, 1 },  // Кнопка 2 - ВОСПР/ПАУЗА
+    { GPIOB, 5, 0 },  // Кнопка 3 - СЛЕДУЮЩИЙ ТРЕК
+    { GPIOB, 4, 0 },  // Кнопка 4 (зарезервирована)
+    { GPIOB, 3, 0 },  // Кнопка 5 (зарезервирована)
 };
 
+void buttons_init(void);
+void button_process(uint32_t interval_ms);
+void button_waitanypress(void);
 
-void Buttons_Init(void);                 // Настройка GPIO под кнопки, вызвать один раз при старте
-void Button_Process(uint32_t interval_ms); // Вызывать в главном цикле
-void Button_WaitAnyPress(void);          // Блокирующее ожидание любой кнопки
-
-// Обработчики кликов — реализовать в другом файле (main.c / app.c)
-void Button1_Click(void);
-void Button2_Click(void);
-void Button3_Click(void);
-void Button4_Click(void);
-void Button5_Click(void);
-// При добавлении кнопки: объявить ButtonN_Click() тут
-// и добавить её в таблицу clickHandlers[] в button.c
+// Обработчики кликов
+void button1_click(void);
+void button2_click(void);
+void button3_click(void);
+void button4_click(void);
+void button5_click(void);
 
 #endif

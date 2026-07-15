@@ -23,5 +23,6 @@ uint32_t wav_get_total_size(void);
 uint32_t wav_get_sample_rate(void);
 uint16_t wav_get_channels(void);
 void     wav_get_file_info(uint32_t* pos, uint32_t* total, uint32_t* sr, uint16_t* ch);
+void wav_stop(void);
 
 #endif

@@ -338,6 +338,8 @@ void wav_pause(void) {
     SPI2->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 }
 
+
+
 void wav_resume(void) {
     if (!playing) return;
     audio_start();
@@ -540,4 +542,32 @@ void wav_get_file_info(uint32_t* pos, uint32_t* total, uint32_t* sr, uint16_t* c
     if (total) *total = total_data_size;
     if (sr)    *sr    = sample_rate;
     if (ch)    *ch    = channels;
+}
+
+// ============================================================================
+// === ОСТАНОВКА ВОСПРОИЗВЕДЕНИЯ =============================================
+// ============================================================================
+
+void wav_stop(void) {
+    if (!playing) return;
+    
+    // Останавливаем DMA и I2S
+    SPI2->CR2 &= ~SPI_CR2_TXDMAEN;
+    DMA1_Stream4->CR &= ~DMA_SxCR_EN;
+    while (DMA1_Stream4->CR & DMA_SxCR_EN) __NOP();
+    DMA1->HIFCR = 0x3DU;
+    SPI2->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
+    
+    // Закрываем файл
+    f_close(&file);
+    
+    // Сбрасываем состояние
+    playing = 0;
+    eof = 0;
+    stopping = 0;
+    need_fill = 0;
+    bytes_left = 0;
+    channels = 0;
+    current_position = 0;
+    total_data_size = 0;
 }

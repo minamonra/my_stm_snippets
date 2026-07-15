@@ -11,7 +11,7 @@ SIZE = arm-none-eabi-size
 CFLAGS = $(MCU) -Os -Wall -g -std=c99 -DSTM32F412Rx -DF_CPU=$(F_CPU)
 
 # === ДОБАВЛЕН ПУТЬ ДЛЯ ИНКЛЮДОВ u8g2x ===
-CFLAGS += -Icmsis/inc -Isrc -Ifs -Irapp -Iaudio -Idisp -Iu8g2x
+CFLAGS += -Icmsis/inc -Isrc -Ifs -Irapp -Iaudio -Idisp -Iu8g2x -Ishffplayer
 CFLAGS += -MMD -MP
 CFLAGS += -include u8g2.h -include common.h
 
@@ -31,9 +31,10 @@ SRCS = src/main.c \
        src/common.c \
        src/tm1637.c \
        src/uart.c \
+	   src/button.c \
+	   shffplayer/shuffle_player.c \
+	   shffplayer/dir_manager.c \
        disp/lcd_io.c \
-       rapp/config_parser.c \
-       rapp/route_mgr.c \
        audio/audio_i2s.c \
        audio/wav_player.c \
        fs/sdcard.c \

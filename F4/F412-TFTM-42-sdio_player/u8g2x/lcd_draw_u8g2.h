@@ -22,4 +22,11 @@ uint8_t lcd_u8g2_get_font_height(void);
 uint8_t lcd_u8g2_get_font_ascent(void);
 uint8_t lcd_u8g2_get_font_descent(void);
 
+// Вычисление ширины строки в пикселях с учетом UTF-8 кириллицы
+uint16_t lcd_u8g2_get_text_width(const char* str);
+
+// Вывод UTF-8 строки с автоматическим переносом по словам в пределах max_w
+void lcd_draw_u8g2_string_wrapped(uint16_t x, uint16_t y, const char* str, uint16_t max_w, uint16_t color, uint16_t bg);
+
+
 #endif // LCD_DRAW_U8G2_H

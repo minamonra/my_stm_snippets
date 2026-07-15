@@ -1,5 +1,5 @@
 #include "common.h"
-#include "pindefs.h"
+
 #include "lcd_io.h"
 #include "audio_i2s.h"
 #include "sdcard.h"

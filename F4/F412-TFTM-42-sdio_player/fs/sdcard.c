@@ -1,4 +1,3 @@
-#include "pindefs.h"
 #include "sdcard.h"
 #include "common.h"
 #include <stddef.h>
@@ -360,28 +359,29 @@ static void sd_enable_high_speed(void) {
 }
 
 static void sd_configure_speed(void) {
+  // 1. Отключаем тактирование шины для безопасного изменения конфигурации
   SDIO->CLKCR &= ~SDIO_CLKCR_CLKEN;
   __DSB();
-  delay_ms(5);
+  delay_ms(1);
 
+  // 2. Настраиваем разрядность шины данных: переключаем в 4-битный режим
   SDIO->CLKCR &= ~SDIO_CLKCR_WIDBUS;
   SDIO->CLKCR |= SDIO_CLKCR_WIDBUS_0;
 
+  // 3. Включаем аппаратный контроль потока (Hardware Flow Control) для предотвращения FIFO Overrun/Underrun
   SDIO->CLKCR |= SDIO_CLKCR_HWFC_EN;
 
-  // ИЗМЕНЕНО: было делитель 0 (максимальная скорость, ~24МГц на грани спецификации
-  // SD ~25МГц). На пограничной частоте возможны периодические CRC-ошибки чтения
-  // на некоторых картах/проводных соединениях, что даёт изредка аномально долгий
-  // f_read() — реже, чем окно из 200 замеров MAX SINGLE f_read TIME, но достаточно
-  // часто, чтобы слышаться постоянным хрипом. Делитель 2 даёт SDIOCLK/(2+2)=12МГц —
-  // заметный запас от границы спецификации.
+  // 4. Максимальный разгон: отключаем делитель частоты и включаем режим BYPASS.
+  // Тактовая частота шины становится равной частоте ядра SDIOCLK (48 МГц).
+  // Потенциальные микрозадержки exFAT-кластеризации полностью нивелируются
+  // за счет увеличенного до 4096 фреймов AUDIO_CHUNK_SIZE в audio_i2s.h.
   SDIO->CLKCR &= ~SDIO_CLKCR_CLKDIV;
-  //SDIO->CLKCR |= (2 << 0);
   SDIO->CLKCR |= SDIO_CLKCR_BYPASS;
 
+  // 5. Включаем тактирование шины обратно и ждем стабилизации линии
   SDIO->CLKCR |= SDIO_CLKCR_CLKEN;
   __DSB();
-  delay_ms(10);
+  delay_ms(1);
 }
 
 uint8_t sd_init(void) {

@@ -6,7 +6,7 @@
 // AUDIO_CHUNK_SIZE = число стерео-фреймов в ОДНОЙ половине циклического буфера.
 // Совпадает со значением, использованным в CubeMX/HAL-версии.
 //#define AUDIO_CHUNK_SIZE   1024
-#define AUDIO_CHUNK_SIZE   2048
+#define AUDIO_CHUNK_SIZE   4096
 typedef void (*audio_buff_ready_callback_t)(uint16_t* buf);
 
 typedef struct {

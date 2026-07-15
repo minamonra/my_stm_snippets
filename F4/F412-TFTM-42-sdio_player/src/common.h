@@ -17,6 +17,7 @@
 extern volatile uint32_t ttms;                             // Глобальный счётчик миллисекунд (SysTick)
 
 void system_clock_config_96MHz(void);
+void hw_init(void);
 void gpio_init(void);
 void delay_ms(uint32_t ms);
 void delay_nop(uint32_t ticks);

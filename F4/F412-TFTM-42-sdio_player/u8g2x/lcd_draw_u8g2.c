@@ -194,3 +194,81 @@ void lcd_draw_u8g2_string(uint16_t x, uint16_t y, const char* str, uint16_t colo
     if (cursor_x >= 480) break;
   }
 }
+
+// Вычисляет ширину строки в пикселях с учетом UTF-8
+uint16_t lcd_u8g2_get_text_width(const char* str) {
+  uint16_t total_width = 0;
+  const char* ptr = str;
+  while (*ptr != '\0') {
+    uint16_t ch = decode_utf8(&ptr);
+    if (ch == 0) break;
+    total_width += 12; // Базовая ширина символа для шрифта terminus_24b
+  }
+  return total_width;
+}
+
+
+// Выводит длинный текст с автоматическим переносом слов на следующую строку
+// в пределах заданной ширины max_w
+void lcd_draw_u8g2_string_wrapped(uint16_t x, uint16_t y, const char* str, uint16_t max_w, uint16_t color, uint16_t bg) {
+  const char* current_ptr = str;
+  const char* last_space = NULL;
+
+  char line_buf[64];
+  uint16_t line_idx = 0;
+  uint16_t current_w = 0;
+  uint16_t current_y = y;
+
+  uint8_t font_h = lcd_u8g2_get_font_height();
+
+  while (*current_ptr != '\0') {
+    const char* saved_ptr = current_ptr;
+    uint16_t ch = decode_utf8(&current_ptr);
+    if (ch == 0) break;
+
+    uint16_t char_w = 12; // Ширина одного символа для terminus_24b
+
+    if (ch == ' ') {
+      last_space = saved_ptr;
+    }
+
+    if (current_w + char_w > max_w) {
+      if (last_space && last_space != str) {
+        current_ptr = last_space + 1;
+        for (int i = line_idx - 1; i >= 0; i--) {
+          if (line_buf[i] == ' ') {
+            line_buf[i] = '\0';
+            break;
+          }
+        }
+      } else {
+        line_buf[line_idx] = '\0';
+      }
+
+      lcd_draw_u8g2_string(x, current_y, line_buf, color, bg);
+      current_y += (font_h + 4);
+
+      line_idx = 0;
+      current_w = 0;
+      last_space = NULL;
+
+      while (*current_ptr == ' ') {
+        decode_utf8(&current_ptr);
+      }
+      continue;
+    }
+
+    uint16_t bytes_to_copy = current_ptr - saved_ptr;
+    for (uint16_t b = 0; b < bytes_to_copy; b++) {
+      if (line_idx < 63) {
+        line_buf[line_idx++] = saved_ptr[b];
+      }
+    }
+    current_w += char_w;
+  }
+
+  if (line_idx > 0) {
+    line_buf[line_idx] = '\0';
+    lcd_draw_u8g2_string(x, current_y, line_buf, color, bg);
+  }
+}

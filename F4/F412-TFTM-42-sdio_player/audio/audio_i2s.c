@@ -1,5 +1,5 @@
 #include "audio_i2s.h"
-#define AUDIO_CHUNK_SIZE   2048
+//#define AUDIO_CHUNK_SIZE   2048
 // Единый ЦИКЛИЧЕСКИЙ буфер на ДВА полу-чанка (по аналогии с HAL: audio_buffer[AUDIO_CHUNK_SIZE*4]
 // half-word, первая половина играет пока заполняется вторая, и наоборот).
 // Формат на каждый стерео-фрейм: [L, R] (16 бит в 32-бит слот, HAL I2S Philips, DataFormat=16b в Frame=32b).
