@@ -1,0 +1,436 @@
+Шрифты:
+https://github.com/immortalserg/AdafruitGFXRusFonts/tree/master/FontsRus
+
+https://github.com/balmerdx/BalmerDX_VNA/blob/master/4code/src/ili/float_to_string.h
+https://github.com/RobertoBenjami/stm32_graphics_display_drivers/blob/master/Drivers/stm32f4xx/lcd_io_spi.c
+
+DEEPSEEK: ILI9488 Display Initialization Fix
+https://chat.deepseek.com/a/chat/s/9dfa1130-7985-44e1-9627-98e50651400e
+
+API Keys
+Create and manage your API keys.
+https://openrouter.ai/workspaces/default/keys
+
+PROXYAPI
+https://console.proxyapi.ru/login
+
+ILI9488 CHAT GPT
+https://www.google.com/search?q=%D0%A2%D1%83%D1%82+%D1%83+%D0%BC%D0%B5%D0%BD%D1%8F+%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B0+%D0%BC%D0%B8%D0%B3%D0%B0%D0%BB%D0%BA%D0%B0+%D0%B4%D0%BB%D1%8F+f103%2C+%D0%B4%D0%B0%D0%B2%D0%B0%D0%B9+%D0%BD%D0%B0%D0%BF%D0%B8%D1%88%D0%B5%D0%BC+%D0%B4%D0%BB%D1%8F+%D0%BC%D0%B0%D0%BA%D0%B5%D1%82%D0%BA%D0%B8+weact+v1.1+stm32f412%2C+%D0%B4%D0%BB%D1%8F+%D0%BD%D0%B0%D1%87%D0%B0%D0%BB%D0%B0+%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%83+openocd+%D0%B2%D0%B8%D0%B4%D0%B8%D1%82+%D0%BB%D0%B8+%D0%BD%D0%B0%D1%88+%D0%B4%D0%B5%D0%B1%D1%83%D0%B3%D0%B3%D0%B5%D1%80+%D0%BE%D1%82%D0%BB%D0%B0%D0%B4%D0%BE%D1%87%D0%BD%D1%83%D1%8E+%D0%BF%D0%BB%D0%B0%D1%82%D1%83&newwindow=1&sca_esv=08cb2687b4d130c5&hl=ru&sxsrf=ANbL-n56KeVTjjOA6GrmUvMs1vTbwXCSsg%3A1780145521970&source=hp&ei=cd0aavufOfj4wPAPlbj_qAo&iflsig=AFdpzrgAAAAAahrrgfGt-4Vn1o1NaCXDmQ8opbyQjl0o&ved=0ahUKEwi7nO_rhuGUAxV4PBAIHRXcH6UQ4dUDCCE&uact=5&oq=%D0%A2%D1%83%D1%82+%D1%83+%D0%BC%D0%B5%D0%BD%D1%8F+%D0%BD%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B0+%D0%BC%D0%B8%D0%B3%D0%B0%D0%BB%D0%BA%D0%B0+%D0%B4%D0%BB%D1%8F+f103%2C+%D0%B4%D0%B0%D0%B2%D0%B0%D0%B9+%D0%BD%D0%B0%D0%BF%D0%B8%D1%88%D0%B5%D0%BC+%D0%B4%D0%BB%D1%8F+%D0%BC%D0%B0%D0%BA%D0%B5%D1%82%D0%BA%D0%B8+weact+v1.1+stm32f412%2C+%D0%B4%D0%BB%D1%8F+%D0%BD%D0%B0%D1%87%D0%B0%D0%BB%D0%B0+%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%83+openocd+%D0%B2%D0%B8%D0%B4%D0%B8%D1%82+%D0%BB%D0%B8+%D0%BD%D0%B0%D1%88+%D0%B4%D0%B5%D0%B1%D1%83%D0%B3%D0%B3%D0%B5%D1%80+%D0%BE%D1%82%D0%BB%D0%B0%D0%B4%D0%BE%D1%87%D0%BD%D1%83%D1%8E+%D0%BF%D0%BB%D0%B0%D1%82%D1%83&gs_lp=Egdnd3Mtd2l6IvgB0KLRg9GCINGDINC80LXQvdGPINC90LDQv9C40YHQsNC90LAg0LzQuNCz0LDQu9C60LAg0LTQu9GPIGYxMDMsINC00LDQstCw0Lkg0L3QsNC_0LjRiNC10Lwg0LTQu9GPINC80LDQutC10YLQutC4IHdlYWN0IHYxLjEgc3RtMzJmNDEyLCDQtNC70Y8g0L3QsNGH0LDQu9CwINC60L7QvNCw0L3QtNGDIG9wZW5vY2Qg0LLQuNC00LjRgiDQu9C4INC90LDRiCDQtNC10LHRg9Cz0LPQtdGAINC-0YLQu9Cw0LTQvtGH0L3Rg9GOINC_0LvQsNGC0YNIg46EAVCM8gRYlYeEAXAHeACQAQGYAYkCoAHhOKoBBjg1LjEuMbgBA8gBAPgBAZgCEKACvAioAgXCAg0QIxieBhjwBRjqAhgnwgINECMY8AUYngYY6gIYJ8ICERAAGIAEGLEDGIMBGJ4GGPAFwgILEAAYgAQYngYY8AXCAg4QABiABBixAxieBhjwBcICFBAAGIAEGIoFGLEDGIMBGJ4GGPAFwgINEAAYgAQYChieBhjwBZgDV5IHBDE1LjGgB6lpsgcEMTEuMbgHpAjCBwYyLTE0LjLIB0uACAE&sclient=gws-wiz&aep=107&cs=0&mstk=AUtExfCPf1RzHqv8q5ZZBe3UrpmQ_joWpgQpQpGINRRWRhHEHYnI0Fpf6qc4TTCZa7wuTStm74X1okQ-8g5oSuU8IR2DSpT2Jj1h7cSAB0ipEmIH26Pu0giDpkmHyw2KxKUb8Izcf8Cpq7wS1CVknbfmna_a-FG6r7CJ5HWIHP9osiETB0SLHENqCR3OsaE4VLKHdTyciI8fGlZEu4jhqhCqyOS_UE2b1lRt4oYtd2-YkFtgcq5S0xLreV1TMTUGiE3yzYLz3ObUhVMvRSe39e8Bx1-VavND9G0ynd1SRKIQoWQCxVhL_4iLTCkwTgp8zUFvdQ6vIYSUQEkUDoA&csuir=1&mtid=6eUaasDNDJvxwPAPwMGBGA&lns_mode=cvst&udm=50
+
+WeActStudio.STM32F4_64Pin_CoreBoard
+https://github.com/WeActStudio/WeActStudio.STM32F4_64Pin_CoreBoard
+
+https://disk.yandex.ru/client/disk/routeinf
+
+https://ozon.ru/t/5U01wQX
+https://github.com/sdima1357/stm32f401ccAudioNative
+
+Для ILI9488 предел на 50МГц - 13FPS
+
+
+U8G2 Шрифты
+https://github.com/olikraus/u8g2/wiki/fntlist16
+https://github.com/olikraus/u8g2/wiki/fntgrpx11
+Клаус
+https://github.com/olikraus/u8g2/tree/master/csrc
+Пример
+https://github.com/leechwort/u8g2-stm32-example
+Хабр
+https://habr.com/ru/companies/otus/articles/899908/
+
+Тут не помню что заинтересовало
+https://github.com/EmberGL-org/EmberGL
+
+Это драйвера дисплеев для STM32
+https://github.com/RobertoBenjami/stm32_graphics_display_drivers/tree/master/Drivers
+
+Русские шрифты Adafruit
+https://github.com/immortalserg/AdafruitGFXRusFonts/blob/master/FontsRus/FreeSansBold14.h
+
+
+
+
+
+
+
+===================================================================
+ТЕХНИЧЕСКОЕ РЕЗЮМЕ ПРОЕКТА: СВЯЗЬ ПУЛЬТА STM32F103 И ПЛЕЕРА STM32F412
+===================================================================
+
+1. АППАРАТНАЯ ЧАСТЬ И СХЕМОТЕХНИКА RS-485
+-------------------------------------------------------------------
+* Китайские синие модули XY-485 со встроенным автонаправлением
+  потока имеют зеркальную маркировку. Они подписаны от лица
+  микросхемы MAX485, а не внешнего интерфейса. Подключение к STM32
+  должно быть строго по прямой схеме: TX микроконтроллера идет на
+  пин TXD модуля, а RX микроконтроллера — на пин RXD модуля. При
+  перекрестном подключении (TX->RXD) выходы микросхем замыкаются
+  друг на друга в логическую единицу, намертво блокируя шину.
+* На плате WeAct F412 стандартные выводы PA2/PA3 (USART2) ловили
+  высокочастотные емкостные наводки от соседних линий отладки SWD
+  и цепей разъема USB-C. Это приводило к постоянным аппаратным
+  ошибкам шума (NE) и кадра (FE) в регистре состояния МК, полностью
+  блокируя прием. Проблема решена физическим переносом связи на
+  чистые боковые пины платы PA9 (TX) и PA10 (RX) модуля USART1.
+* На плате пульта STM32F103 трансивер распаян прямо на дорожках и
+  не имеет автоматики направления. Для отправки данных задействовано
+  жесткое регистровое управление ножкой PB15. Логика переключения:
+  перед отправкой кадра макрос RS485DE1 поднимает PB15 в единицу
+  (режим передачи). После выталкивания байт программа ожидает
+  взвода аппаратного флага TC (Transmission Complete), делает
+  короткую защитную паузу, чтобы не обрезать стоп-бит, и макросом
+  RS485DE0 опускает PB15 в ноль (возврат в режим приема).
+
+
+2. РАЗДЕЛЕНИЕ ПРОТОКОЛОВ (АДРЕСАЦИЯ В ОБЩЕЙ СЕТИ)
+-------------------------------------------------------------------
+* Шина RS-485 является общей физической линией связи, на которой
+  параллельно висят и бегущая строка P10, и новый аудио-плеер.
+  Чтобы два устройства не путали и не ломали команды друг друга,
+  утвержден фиксированный формат аудио-пакетов пульта: <SXXXX...>,
+  где буквенный префикс "S" (Sound) является маркером звука, а
+  четыре последующие цифры "XXXX" кодируют номер команды.
+* Логика фильтрации на стороне плеера F412: принятая строка
+  накапливается в буфере. Если первый символ не равен 'S' (например,
+  прилетел пакет яркости для бегущей строки формата <1##Текст>),
+  плеер распознает кадр как чужой. Он выводит первые 4 символа на
+  дисплей TM1637 для визуального контроля, но звуковую часть не
+  трогает. Если первый символ равен 'S', срабатывает внутренний
+  switch-case аудио-плеера: он вырезает 4 цифры команды для вывода
+  на TM1637, а сопутствующий текст названия аудиофайла (который
+  начинается строго с 5-го символа пакета без наложений в памяти)
+  готовится передать в файловую систему. Панель P10, встретив
+  букву 'S' вместо привычной цифры яркости, также игнорирует этот
+  кадр, что полностью исключает конфликты на одной шине.
+
+
+3. ОСОБЕННОСТИ СИ-КОДА И АРХИТЕКТУРЫ CMSIS
+-------------------------------------------------------------------
+* Целевая скорость сети для синхронизации с передатчиком на обеих
+  платах жестко зафиксирована на значении 4800 бод (8N1).
+* На стороне плеера F412 (частота ядра 100 МГц, шина APB2 = 100 МГц):
+  чтобы идеально попадать в медленный битрейт 4800 бод без джиттера,
+  USART1 переведен в режим устойчивого оверсемплинга по 8 точкам
+  (OVER8 = 1), а регистр BRR жестко инициализируется значением
+  0xA2C1. Настройка альтернативных функций портов PA9/PA10 выполнена
+  через верхний полупорт регистра конфигурации с явным указанием
+  индекса массива: GPIOA->AFR[1]. Прием кадра заведен на фоновый
+  кольцевой буфер через прерывание NVIC (линия 37).
+* На стороне пульта F103 (частота ядра и шины APB2 равна 8 МГц HSI):
+  конфигурация кадра USART1 выполняется пошагово строго при
+  выключенном модуле (CR1 = 0), а регистр BRR инициализируется
+  значением 0x0683, что исключает кремниевое зависание передатчика.
+  Сканирование кнопок пурта (PA8, PB14, PA11, PA12, PB1) с алгоритмом
+  антидребезга и фиксацией длинных нажатий (update_button_state)
+  упаковано в неблокирующий таймер опроса каждые 5 миллисекунд от
+  системного таймера SysTick. Это необходимо, так как при опросе
+  на максимальной скорости цикла счетчики антидребезга пролетали бы
+  вхолостую. Зарезервированные по умолчанию ножки отладки JTAG (PB3,
+  PB4, PA15), мешавшие работе портов пульта, были аппаратно
+  отключены через регистр AFIO->MAPR с сохранением линий SWD.
+
+
+4. ОШИБКИ ЛИНКОВЩИКА И СТРУКТУРА ПРОЕКТА ПУЛЬТА
+-------------------------------------------------------------------
+* Ошибки линковки "multiple definition of ms_ticks" и "undefined
+  reference" к системным функциям были вызваны неверным объявлением
+  глобальных ресурсов. В языке Си запрещено выделять память под
+  переменные внутри заголовочного .h файла, если этот файл
+  подключается в несколько мест (в main.c и buttons.c). Мы разделили
+  код: в файле inc/common.h переменная объявлена как виртуальная
+  ссылка через макрос "extern volatile uint32_t ms_ticks;", а сама
+  физическая память под нее и тела функций hardware_init() и
+  get_tick() выделены внутри исполняемого файла src/common.c.
+* Чтобы компилятор GNU Arm Embedded Toolchain подхватывал все
+  новые модули пульта, в Makefile был скорректирован жесткий ручной
+  список файлов в переменной C_SOURCES. Принудительный вызов
+  команды очистки старого кэша (make clean) перед прошивкой
+  (make flash) гарантировал, что линтовщик чисто собирает и связывает
+  объектные файлы buttons.o, main.o, rs485.o и common.o в единый
+  main.elf без синтаксических сбоев.
+
+
+5. КОНФИГУРАЦИЯ СРЕДЫ VS CODE (.vscode/)
+-------------------------------------------------------------------
+Проект пульта полностью укомплектован файлами настроек для превращения
+VS Code в полноценную и удобную IDE:
+* c_cpp_properties.json: полностью изолирован от старого проекта
+  F412, в секцию "defines" прописан макрос STM32F103xB и системная
+  частота F_CPU=72000000UL (для будущего разгона на внешний кварц),
+  благодаря чему IntelliSense корректно подсвечивает регистры.
+* launch.json: настроен на работу с OpenOCD через целевой скрипт
+  target/stm32f1x.cfg и интерфейс cmsis-dap. В папку .vscode подкинут
+  официальный файл описания периферии STM32F103.svd (параметр svdFile),
+  что позволяет во время отладки по кнопке F5 вживую разворачивать
+  дерево регистров и видеть состояние каждого бита процессора.
+* settings.json: интегрирован автоматический форматер кода clang-format
+  в стиле Google со сжатыми отступами в 2 пробела и прижатыми скобками
+  на той же строке (BreakBeforeBraces: Attach). Включена опция
+  "editor.formatOnSave": true. Для защиты от порчи структуры кода
+  вставлены жесткие запреты на самовольное добавление случайных
+  инклудов расширением Microsoft при автодополнении (autoAddIncludes: false)
+  и полностью отключена их алфавитная сортировка.
+* Форматирование Makefile: чтобы встроенные автоматические форматтеры
+  не заменяли системные табуляции пробелами (что намертво ломает сборку
+  make с ошибкой "missing separator"), для файлов типа [makefile]
+  жестко запрещена вставка пробелов (insertSpaces: false), визуальный
+  размер таба приравнен к 4, а дефолтным форматтером назначен официальный
+  плагин от Microsoft (ms-vscode.makefile-tools).
+* Горячие клавиши: системная команда форматирования документа привязана
+  к глобальной комбинации Alt + Shift + F. Теперь при нахождении в Си-файлах
+  нажатие Alt+Shift+F наводит идеальный порядок пробелами, а внутри
+  файла Makefile — выравнивает списки, сохраняя правильные табы (\t).
+
+
+
+###
+#TF Interface PC10-DAT2,PC11-CD/DAT3,PD2-CMD,VDD33-VVDD,PC12-CLK,GND-VSS,PC8-DAT0,PC9-DAT1,MH4-MH3-GND,MH2-MH1-R12(10k)-PA8
+
+Ключевые моменты которые заработали:
+
+    Частота 96 МГц → SDIO получает 48 МГц (обязательно для SD!)
+
+    NEGEDGE = 1 → захват на падающий фронт (решило проблему с проводами)
+
+    Pull-up резисторы на всех линиях SDIO
+
+    Правильная последовательность CMD0 → CMD8 → ACMD41
+
+    Медленная частота для инициализации (~400 кГц)
+
+Что теперь можно делать:
+c
+
+// Проверка наличия карты
+if (SD_IsCardPresent()) {
+    // Карта есть
+}
+
+// Чтение сектора 0 (512 байт)
+uint8_t buffer[512];
+if (SD_ReadSector(0, buffer) == 0) {
+    // Успешно прочитано
+    // buffer[0] - первый байт MBR
+}
+
+// Инициализация карты
+uint8_t result = SD_Init();
+if (result == 0) {
+    // Карта готова к работе
+}
+
+Дальнейшие шаги (по желанию):
+
+    Добавить FATFS - для работы с файлами
+
+    Добавить запись секторов - реализовать SD_WriteSector
+
+    Добавить DMA - для быстрого чтения/записи
+
+    Добавить SDHC поддержку - для карт >2GB
+
+
+
+    uint8_t SD_Init(void) {
+    uint32_t retry = 0;
+    uint32_t resp;
+
+    // Базовая проверка: подается ли физически тактирование
+    if (!(SDIO->CLKCR & SDIO_CLKCR_CLKEN)) {
+        return 0x99;
+    }
+
+    // ==========================================================
+    // ПОДГОТОВКА: Подача минимум 74 тактовых импульсов
+    // ==========================================================
+    SDIO->CMD = 0;
+    delay_ms(30);
+    SDIO->ICR = 0xFFFFFFFF;
+    __DSB();
+
+    // ==========================================================
+    // РАУНД 0: CMD0
+    // ==========================================================
+    SDIO->ARG = 0x00000000;
+    SDIO->CMD = (0 << 0) | (0 << 6) | SDIO_CMD_CPSMEN;
+    __DSB();
+
+    retry = 0;
+    while (!(SDIO->STA & SDIO_STA_CMDSENT)) {
+        if (++retry > 800000) {
+            SDIO->ICR = 0xFFFFFFFF;
+            return 0x01;
+        }
+    }
+
+    SDIO->ICR = SDIO_ICR_CMDSENTC;
+    delay_ms(30);
+
+    // ==========================================================
+    // РАУНД 1: CMD8
+    // ==========================================================
+    SDIO->ICR = 0xFFFFFFFF;
+    __DSB();
+    delay_ms(10);
+
+    SDIO->ARG = 0x000001AA;
+    SDIO->CMD = (8 << 0) | (1 << 6) | SDIO_CMD_CPSMEN;
+    __DSB();
+
+    retry = 0;
+    while (!(SDIO->STA & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL))) {
+        if (++retry > 800000) {
+            return 0x02;
+        }
+    }
+
+    if (SDIO->STA & SDIO_STA_CTIMEOUT) {
+        SDIO->ICR = SDIO_ICR_CTIMEOUTC;
+    } else {
+        resp = SDIO->RESP1;
+        if ((resp & 0xFF) != 0xAA) {
+            SDIO->ICR = 0xFFFFFFFF;
+            return 0x05;
+        }
+        SDIO->ICR = 0xFFFFFFFF;
+    }
+
+    delay_ms(20);
+
+    // ==========================================================
+    // РАУНД 2: ACMD41
+    // ==========================================================
+    retry = 0;
+    while (retry < 600) {
+        SDIO->ICR = 0xFFFFFFFF;
+        __DSB();
+
+        // CMD55
+        SDIO->ARG = 0x00000000;
+        SDIO->CMD = (55 << 0) | (1 << 6) | SDIO_CMD_CPSMEN;
+        __DSB();
+
+        uint32_t sub_retry = 0;
+        while (!(SDIO->STA & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL))) {
+            if (++sub_retry > 300000) break;
+        }
+
+        if (SDIO->STA & SDIO_STA_CTIMEOUT) {
+            SDIO->ICR = SDIO_ICR_CTIMEOUTC;
+            SDIO->ICR = 0xFFFFFFFF;
+            SDIO->ARG = 0x40FF8000;
+            SDIO->CMD = (1 << 0) | (1 << 6) | SDIO_CMD_CPSMEN;
+            __DSB();
+
+            sub_retry = 0;
+            while (!(SDIO->STA & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT))) {
+                if (++sub_retry > 300000) break;
+            }
+
+            if (!(SDIO->STA & SDIO_STA_CTIMEOUT)) {
+                if (SDIO->RESP1 & 0x80000000) {
+                    SDIO->ICR = 0xFFFFFFFF;
+                    sd_card_info.is_initialized = 1;
+                    return 0;
+                }
+            }
+
+            delay_ms(10);
+            retry++;
+            continue;
+        }
+
+        SDIO->ICR = 0xFFFFFFFF;
+        __DSB();
+
+        // ACMD41
+        SDIO->ARG = 0x40FF8000;
+        SDIO->CMD = (41 << 0) | (1 << 6) | SDIO_CMD_CPSMEN;
+        __DSB();
+
+        sub_retry = 0;
+        while (!(SDIO->STA & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL))) {
+            if (++sub_retry > 300000) break;
+        }
+
+        if (SDIO->STA & SDIO_STA_CTIMEOUT) {
+            SDIO->ICR = SDIO_ICR_CTIMEOUTC;
+            delay_ms(10);
+            retry++;
+            continue;
+        }
+
+        resp = SDIO->RESP1;
+
+        if (resp == 0x00000000) {
+            SDIO->ICR = 0xFFFFFFFF;
+            __DSB();
+            delay_ms(15);
+            retry++;
+            continue;
+        }
+
+        if (resp & 0x80000000) {
+            SDIO->ICR = 0xFFFFFFFF;
+            sd_card_info.is_initialized = 1;
+            return 0;
+        }
+
+        SDIO->ICR = 0xFFFFFFFF;
+        __DSB();
+        delay_ms(15);
+        retry++;
+    }
+
+    SDIO->ICR = 0xFFFFFFFF;
+    return 0x06;
+}
+
+
+
+
+
+=== ARCHITECTURE OVERVIEW ===
+
+[CORE & BUILD]
+- makefile: Сценарий сборки. Отслеживает изменения в заголовках, собирает main.bin и шьет плату через OpenOCD.
+- STM32F412RETx_FLASH.ld: Скрипт линкера. Распределяет код программы во Flash-памяти и переменные в ОЗУ.
+
+[DRIVERS & HARDWARE (src/)]
+- main.c: Точка входа. Управляет инициализацией и связывает логику файловой системы с выводом в консоль.
+- uart.c / uart.h: Драйвер USART1 (консоль отладки) и USART3. Содержит кольцевой буфер без блокировок, устойчивый к шумам.
+- common.c / common.h: Настройка тактирования ядра на 96 МГц (выделяет ровно 48 МГц для шины SDIO) и мигалка без задержек.
+- tm1637.c / tm1637.h: Драйвер 4-разрядного семисегментного LED-индикатора для вывода кодов ошибок или номеров поездов.
+- pindefs.h: Карта распределения портов и выводов (Pinout) вашей платы. Задает макросы кнопок, LED и детекта карты.
+
+
+[STORAGE LAYER (fs/)]
+- sdcard.c / sdcard.h: Нативный драйвер SDIO. Работает по 4-битной шине в режиме Polling (опрос статуса процессором).
+- diskio.c / diskio.h: Прослойка абстракции. Связывает функции FatFs (disk_read/write) с низкоуровневым драйвером sdcard.c.
+- ff.c / ff.h: Ядро открытой библиотеки FatFs от ChaN. Отвечает за логику таблиц FAT16/FAT32, кластеров и директорий.
+- ffconf.h: Конфигурация FatFs. Задает поддержку длинных имен, кодовые страницы и режим доступа к файлам.
+- ffunicode.c: Таблицы кодировок Unicode для корректной работы файловой системы с длинными именами.
+
+[BUSINESS LOGIC (rapp/)]
+- config_parser.c / config_parser.h: Бинарный парсер. Вычитывает из config.bin шапку в 208 байт и записи станций по 264 байта.
+- route_mgr.c / route_mgr.h: Менеджер маршрутов. Циклически сканирует папки от 01 до 99 на наличие файлов config.bin.
+
+
+Плата фиолетовая, перемычки H3L=3.3, H1L,H2L,H4L=GND, AGND соеденина с GND, A3V3 с VIN, XSMT с VCC, SCK с GND
+
+
+
+
+
+
+
+
+
+
+
+Давай проверим один конкретный тест: вместо реального WAV с SD-карты
+заполним оба буфера раз и навсегда одинаковым статическим паттерном
+(нашей реальной WAV-unpack логикой, но без фактических вызовов f_read/SD),
+и отключим всю логику перезаписи во время воспроизведения.
+Раз это — по сути тот же синтетический тест, который работал без хрипа,
+это покажет, остаётся ли хрип без SD/реальных данных вообще.

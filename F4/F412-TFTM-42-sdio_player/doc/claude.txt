@@ -1,0 +1,13 @@
+Получилось запустить в Cube IDE. Настройки тактирования другие. 
+Проанализируй где же мы ошиблись. 
+Из графического настройщика вижу так: 
+Кварц 8МГц. 
+System Clock Mux -> PLLCLK Sysclk -> 96 -> AHB Prescaler/2 -> HCLK 96 -> APB1/2 -> APB2/1. 
+PLL Soure Mux - PLLM/8 -> X192 -> /2/P -> /4/Q -> /2/R.  
+HS_CK -> PLLI2SM/8/X192 -> /4/P -> /4/Q -> /2/R -> PLLI2SR -> 96 To I2S_APB1 CLK.  
+SDIO Clock Mux -> PLL48CLK -> 48.
+
+Сам wav_player.c рабочий получился такой.  
+I2S2 настройки -> I2S Phillips -> 16 бит в 32gfame.  
+SPI2_TX -> DMA1 Stream4->Mem to Perith -> Mode Circular -> no fifo -> Data with perith - half word, memory - half word.
+

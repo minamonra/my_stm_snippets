@@ -1,0 +1,36 @@
+{
+  "configurations": [
+    {
+      "name": "STM32",
+      "includePath": [
+        "${workspaceFolder}/cmsis/inc",
+        "${workspaceFolder}/cmsis/inc/m-profile",
+        "${workspaceFolder}/audio",
+        "${workspaceFolder}/disp",
+        "${workspaceFolder}/fs",
+        "${workspaceFolder}/rapp",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/u8g2x"
+      ],
+      "defines": [
+        "STM32F412Rx",
+        "STM32F4",
+        "F_CPU=96000000UL",
+        "DEBUG"
+      ],
+      "compilerPath": "arm-none-eabi-gcc",
+      "cStandard": "c99",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "gcc-arm",
+      "compilerArgs": [
+        "-mcpu=cortex-m4",
+        "-mthumb",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv4-sp-d16",
+        "-include", "${workspaceFolder}/u8g2x/u8g2.h",
+        "-include", "${workspaceFolder}/src/common.h"
+      ]
+    }
+  ],
+  "version": 4
+}
