@@ -1,22 +1,22 @@
 # 🎸 STM32F412 Shuffle Player
 
 ## 🎥 Видео
-[Посмотреть видео на Яндекс Диске](https://disk.yandex.ru/i/cIGKIHr9selWeQ)
+[Яндекс Диск](https://disk.yandex.ru/i/cIGKIHr9selWeQ)
 
 ---
 
-## 📋 Распиновка (Pinout) STM32F412Rx
+## 📋 Pinout STM32F412RET6
 
 ### 💾 1. SD-карта, SDIO:
 
 | Пин | SDIO | SD | Назначение |
 | :--- | :--- | :--- | :--- |
-| **PC8** | SDIO_D0 | DAT0 (Pin 7) | Линия данных 0 |
-| **PC9** | SDIO_D1 | DAT1 (Pin 8) | Линия данных 1 |
-| **PC10** | SDIO_D2 | DAT2 (Pin 9) | Линия данных 2 |
-| **PC11** | SDIO_D3 | CD/DAT3 (Pin 1) | Линия данных 3 |
+| **PC8** | SDIO_D0 | DAT0 (Pin 7) | Данные 0 |
+| **PC9** | SDIO_D1 | DAT1 (Pin 8) | Данные 1 |
+| **PC10** | SDIO_D2 | DAT2 (Pin 9) | Данные 2 |
+| **PC11** | SDIO_D3 | CD/DAT3 (Pin 1) | Данные 3 |
 | **PC12** | SDIO_CK | CLK (Pin 5) | Тактовая частота шины (Clock) |
-| **PD2** | SDIO_CMD | CMD (Pin 2) | Командная линия управления (Command) |
+| **PD2** | SDIO_CMD | CMD (Pin 2) | Управление (Command) |
 
 ### 🔊 2. I2S2 -> PCM5102:
 
@@ -34,8 +34,8 @@
 | **PA7** | SPI1_MOSI | MOSI / SDA | Передача пикселей данных |
 | **PB0** | LCD_CS | CS | Выбор чипа (Chip Select) |
 | **PB2** | LCD_DC | DC / RS / A0 | Выбор: Данные или Команда |
-| **PB1** | LCD_RST | RESET / RST | Аппаратный сброс контроллера экрана |
-| **PA1** | LCD_BL | LED / BL | Подсветка экрана (Включение дисплея) |
+| **PB1** | LCD_RST | RESET / RST | Сброс контроллера (Reset) |
+| **PA1** | LCD_BL | LED / BL | Подсветка экрана |
 
 ### 🎛 4. Кнопки:
 
