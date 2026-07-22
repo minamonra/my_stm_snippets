@@ -28,7 +28,7 @@ uint16_t dir_manager_scan_total(void) {
     uint16_t dir_count = 0;
     if (f_opendir(&root_dj, ROOT_DIR) != FR_OK) return 0;
 
-    char tmp_path[32];
+    char tmp_path[256];
     while (f_readdir(&root_dj, &root_fno) == FR_OK && root_fno.fname[0] != '\0') {
         if (root_fno.fattrib & AM_DIR) {
             // Формируем путь "0:/ИмяПапки"

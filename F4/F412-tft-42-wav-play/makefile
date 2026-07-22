@@ -11,7 +11,7 @@ SIZE = arm-none-eabi-size
 CFLAGS = $(MCU) -Os -Wall -g -std=c99 -DSTM32F412Rx -DF_CPU=$(F_CPU)
 
 # === ДОБАВЛЕН ПУТЬ ДЛЯ ИНКЛЮДОВ u8g2x ===
-CFLAGS += -Icmsis/inc -Isrc -Ifs -Irapp -Iaudio -Idisp -Iu8g2x -Ishffplayer
+CFLAGS += -Icmsis/inc -Isrc -Ifs -Irapp -Iaudio -Idisp -Iu8g2x -Iwav_player_ui
 CFLAGS += -MMD -MP
 CFLAGS += -include u8g2.h -include common.h
 
@@ -29,11 +29,10 @@ OOCD_SPEED = 500
 # ============================================================================
 SRCS = src/main.c \
        src/common.c \
-       src/tm1637.c \
        src/uart.c \
 	   src/button.c \
-	   shffplayer/shuffle_player.c \
-	   shffplayer/dir_manager.c \
+	   wav_player_ui/wav_player_ui.c \
+	   wav_player_ui/dir_manager.c \
        disp/lcd_io.c \
        audio/audio_i2s.c \
        audio/wav_player.c \

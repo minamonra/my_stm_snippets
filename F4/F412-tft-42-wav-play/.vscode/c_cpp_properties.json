@@ -10,7 +10,7 @@
         "${workspaceFolder}/fs",
         "${workspaceFolder}/src",
         "${workspaceFolder}/u8g2x",
-        "${workspaceFolder}/shffplayer"
+        "${workspaceFolder}/wav_player_ui"
       ],
       "defines": [
         "STM32F412Rx",
