@@ -4,42 +4,8 @@
 #include "ff.h"
 #include <string.h>
 
-/*
-Сейчас структура очень хорошая:
-
-wav_play()
-    |
-    +--> открыть файл
-    +--> прочитать заголовок
-    +--> wav_prime_buffers()
-    +--> audio_start()
-
-DMA IRQ
-    |
-    +--> cb_buffer_ready()
-            |
-            +--> wav_fill_buffer()
-
-wav_seek()
-    |
-    +--> остановить DMA
-    +--> f_lseek()
-    +--> wav_prime_buffers()
-    +--> audio_start()
-
-wav_process()
-    |
-    +--> только обработка остановки
-
-То есть чтением SD-карты занимаются только две функции:
-wav_fill_buffer() — во время воспроизведения;
-wav_prime_buffers() — при старте и перемотке
- 
-*/
-
-
 extern volatile uint32_t ttms;
-uint32_t                 wav_data_offset = 44;
+#define WAV_DATA_OFFSET 44
 
 // Структура WAV-заголовка (44 байта)
 typedef struct {
@@ -61,6 +27,7 @@ typedef struct {
 // Глобальные переменные файловой системы и состояния воспроизведения
 static FATFS    fs;
 static FIL      file;
+static uint8_t  mounted    = 0;
 static uint8_t  playing    = 0;
 static uint8_t  eof        = 0;
 static uint8_t  stopping   = 0;
@@ -73,28 +40,6 @@ static uint32_t current_position = 0;
 static uint32_t total_data_size  = 0;
 
 static uint16_t buf_raw[AUDIO_CHUNK_SIZE * 2] __attribute__((aligned(4)));
-
- // очищаем все флаги DMA Stream4; можно записать так: DMA1->HIFCR = 0x3DU;
-#define DMA_STREAM4_CLR_ALL_FLAGS ( \
-    DMA_HIFCR_CFEIF4  | \
-    DMA_HIFCR_CDMEIF4 | \
-    DMA_HIFCR_CTEIF4  | \
-    DMA_HIFCR_CHTIF4  | \
-    DMA_HIFCR_CTCIF4)
-
-
-static inline void audio_stop_dma1_stream4(void) {
-    SPI2->CR2 &= ~SPI_CR2_TXDMAEN;
-    DMA1_Stream4->CR &= ~DMA_SxCR_EN;
-    while (DMA1_Stream4->CR & DMA_SxCR_EN) __NOP();
-    DMA1->HIFCR = (     \
-    DMA_HIFCR_CFEIF4  | \
-    DMA_HIFCR_CDMEIF4 | \
-    DMA_HIFCR_CTEIF4  | \
-    DMA_HIFCR_CHTIF4  | \
-    DMA_HIFCR_CTCIF4);
-    SPI2->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
-}
 
 // === БЛОК РАСПАКОВКИ ========================================================
 #if defined(WAV_MODE_FAST_HALF)
@@ -187,27 +132,32 @@ void wav_get_file_info(uint32_t* pos, uint32_t* total, uint32_t* sr, uint16_t* c
   if (ch) *ch = channels;
 }
 
+// Заполнить DMA-буфер тишиной и сигнализировать об окончании
+static void fill_silence(uint16_t* buf) {
+  memset(buf, 0, WAV_HALF_BYTES);
+  eof      = 1;
+  stopping = 1;
+}
+
 // функция которая умеет заполнить один DMA-полу-буфер
 static void wav_fill_buffer(uint16_t* buf) {
   uint32_t chunk = AUDIO_CHUNK_SIZE * (channels == 1 ? 2 : 4);
-  UINT     br = 0;
-  uint32_t n  = (bytes_left > chunk) ? chunk : bytes_left;
+  UINT     br    = 0;
+  uint32_t n     = (bytes_left > chunk) ? chunk : bytes_left;
   if (n == 0) {
-    memset(buf, 0, AUDIO_CHUNK_SIZE * 2 * sizeof(uint16_t));
-    eof      = 1;
-    stopping = 1;
+    fill_silence(buf);
     return;
   }
   if (f_read(&file, buf_raw, n, &br) != FR_OK) {
-    memset(buf, 0, AUDIO_CHUNK_SIZE * 2 * sizeof(uint16_t));
-    eof      = 1;
-    stopping = 1;
+    fill_silence(buf);
     return;
   }
   bytes_left -= br;
   current_position += br;
-  if (channels == 1) unpack_mono(buf, buf_raw, br / 2);
-  else unpack_stereo(buf, buf_raw, br);
+  if (channels == 1)
+    unpack_mono(buf, buf_raw, br / 2);
+  else
+    unpack_stereo(buf, buf_raw, br);
 
   if (br < chunk) {
     if (channels == 1) {
@@ -235,52 +185,64 @@ static void cb_buffer_ready(uint16_t* buf) {
   wav_fill_buffer(buf);
 }
 
+// Сброс состояния плеера (без остановки аппаратуры и закрытия файла)
+static void wav_reset_state(void) {
+  playing          = 0;
+  eof              = 0;
+  stopping         = 0;
+  bytes_left       = 0;
+  channels         = 0;
+  current_position = 0;
+  total_data_size  = 0;
+}
+
 // === ПУБЛИЧНЫЙ ИНТЕРФЕЙС ====================================================
 uint8_t wav_play(const char* filename) {
   wav_header_t hdr;
   UINT         br;
-  if (playing) {
-    audio_stop_dma1_stream4();
-    f_close(&file);
-    playing = 0;
-  }
-  eof                    = 0;
-  stopping               = 0;
-  bytes_left             = 0;
-  channels               = 0;
-  current_position       = 0;
-  total_data_size        = 0;
-  static uint8_t mounted = 0;
+
+  // Остановить предыдущее воспроизведение и сбросить состояние
+  if (playing) wav_stop();
+  wav_reset_state();
+
+  // Монтирование FatFS (однократно)
   if (!mounted) {
     if (f_mount(&fs, "0:", 0) != FR_OK) return 1;
     mounted = 1;
   }
+
+  // Открыть WAV-файл
   if (f_open(&file, filename, FA_READ) != FR_OK) return 2;
+
+  // Прочитать и проверить заголовок
   if (f_read(&file, &hdr, sizeof(hdr), &br) != FR_OK ||
       br != sizeof(hdr) ||
       memcmp(hdr.chunk_id, "RIFF", 4) != 0) {
     f_close(&file);
     return 3;
   }
-  channels                = hdr.num_channels;
-  sample_rate             = hdr.sample_rate;
-  uint32_t real_data_size = f_size(&file) - wav_data_offset;
-  if (hdr.subchunk2_size > 0 && hdr.subchunk2_size <= real_data_size) {
-    total_data_size = hdr.subchunk2_size;
-  } else {
-    total_data_size = real_data_size;
-  }
-  bytes_left = total_data_size;
-  if (f_lseek(&file, wav_data_offset) != FR_OK) {
+
+  channels    = hdr.num_channels;
+  sample_rate = hdr.sample_rate;
+
+  // Определить размер аудиоданных
+  uint32_t file_data_size = f_size(&file) - WAV_DATA_OFFSET;
+  total_data_size         = (hdr.subchunk2_size > 0 && hdr.subchunk2_size <= file_data_size)
+                                ? hdr.subchunk2_size
+                                : file_data_size;
+  bytes_left              = total_data_size;
+
+  // Перейти к началу аудиоданных
+  if (f_lseek(&file, WAV_DATA_OFFSET) != FR_OK) {
     f_close(&file);
     return 4;
   }
-  // заполнить оба DMA-буфера
+
+  // Заполнить оба DMA-буфера и запустить воспроизведение
   wav_prime_buffers();
-  audio_callbacks_t cb = { .on_buffer_ready = cb_buffer_ready };
+  audio_callbacks_t cb = {.on_buffer_ready = cb_buffer_ready};
   audio_set_callbacks(&cb);
   playing = 1;
-  current_position = 0;
   audio_start();
   return 0;
 }
@@ -288,18 +250,16 @@ uint8_t wav_play(const char* filename) {
 //
 void wav_process(void) {
   if (stopping && playing) {
-    void audio_stop_dma1_stream4();
+    audio_stop();
     f_close(&file);
-    playing  = 0;
-    stopping = 0;
-    eof      = 0;
+    wav_reset_state();
   }
 }
 
 // ФУНКЦИИ УПРАВЛЕНИЯ ВОСПРОИЗВЕДЕНИЕМ
 void wav_pause(void) {
   if (!playing) return;
-  audio_stop_dma1_stream4();
+  audio_stop();
 }
 
 void wav_resume(void) {
@@ -310,18 +270,12 @@ void wav_resume(void) {
 // ОСТАНОВКА ВОСПРОИЗВЕДЕНИЯ
 void wav_stop(void) {
   if (!playing) return;
-  audio_stop_dma1_stream4(); // Останавливаем DMA и I2S
+  audio_stop();  // Останавливаем DMA и I2S
   f_close(&file);
-  playing          = 0;
-  eof              = 0;
-  stopping         = 0;
-  bytes_left       = 0;
-  channels         = 0;
-  current_position = 0;
-  total_data_size  = 0;
+  wav_reset_state();
 }
 
-// === УНИВЕРСАЛЬНАЯ ПЕРЕМОТКА (ДЛЯ ДЛИТЕЛЬНЫХ НАЖАТИЙ) =======================
+// УНИВЕРСАЛЬНАЯ ПЕРЕМОТКА (ДЛЯ ДЛИТЕЛЬНЫХ НАЖАТИЙ)
 void wav_seek(uint32_t new_position) {
   if (!playing) return;
   uint32_t block_align = channels * 2;  // 16-bit PCM
@@ -333,10 +287,10 @@ void wav_seek(uint32_t new_position) {
     else
       new_position = 0;
   }
-  
-  audio_stop_dma1_stream4(); // Остановить передачу
 
-  if (f_lseek(&file, wav_data_offset + new_position) != FR_OK) {
+  audio_stop();  // Остановить передачу
+
+  if (f_lseek(&file, WAV_DATA_OFFSET + new_position) != FR_OK) {
     audio_start();
     return;
   }

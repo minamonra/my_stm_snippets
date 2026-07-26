@@ -6,7 +6,27 @@
 // ДАННЫЕ ЗНАКОВЫЕ (int16_t), упакованы подряд без заполнителя.
 // STM32 в режиме Philips с CHLEN=1 и DATLEN=00 автоматически размещает 16 бит
 // в старших 16 битах 32-битного слота, младшие 16 бит = 0x0000.
-__attribute__((aligned(4))) static uint16_t audio_buffer[AUDIO_CHUNK_SIZE * 4];
+
+// Макрос настройки пина на альтернативную функцию
+// Используем _Generic или явное приведение, чтобы избежать
+// warning "shift count >= width of type" для мёртвой ветки при pin >= 8.
+// Решение: выносим выбор регистра AFR в отдельный макрос через тернарный оператор
+// с приведением к указателю, чтобы компилятор не видел мёртвую ветку.
+#define GPIO_AF_CONFIG(port, pin, af) \
+    do { \
+        port->MODER   &= ~(3U << ((pin) * 2)); \
+        port->MODER   |=  (2U << ((pin) * 2)); \
+        port->OSPEEDR |=  (3U << ((pin) * 2)); \
+        port->PUPDR   &= ~(3U << ((pin) * 2)); \
+        volatile uint32_t* afr = ((pin) < 8) \
+            ? &(port)->AFR[0] \
+            : &(port)->AFR[1]; \
+        uint32_t afr_pin = ((pin) < 8) ? (pin) : ((pin) - 8); \
+        *afr &= ~(0xFU << (afr_pin * 4)); \
+        *afr |=  ((af)  << (afr_pin * 4)); \
+    } while (0)
+
+__attribute__((aligned(4))) static uint16_t audio_buffer[AUDIO_BUF_SIZE];
 
 static audio_callbacks_t callbacks = {0};
 
@@ -15,7 +35,7 @@ uint16_t* audio_get_buffer1(void) {
 }
 
 uint16_t* audio_get_buffer2(void) {
-    return &audio_buffer[AUDIO_CHUNK_SIZE * 2];       // Вторая половина
+    return &audio_buffer[AUDIO_HALF_SIZE];       // Вторая половина
 }
 
 void audio_set_callbacks(audio_callbacks_t* cb) {
@@ -57,12 +77,9 @@ void audio_init(void) {
     RCC->APB1RSTR &= ~RCC_APB1RSTR_SPI2RST;
 
     // 3. GPIO PB12, PB13, PB15 -> AF5 (I2S2)
-    GPIOB->MODER   &= ~((3U << (12 * 2)) | (3U << (13 * 2)) | (3U << (15 * 2)));
-    GPIOB->MODER   |=  ((2U << (12 * 2)) | (2U << (13 * 2)) | (2U << (15 * 2)));
-    GPIOB->OSPEEDR |=  ((3U << (12 * 2)) | (3U << (13 * 2)) | (3U << (15 * 2)));
-    GPIOB->PUPDR   &= ~((3U << (12 * 2)) | (3U << (13 * 2)) | (3U << (15 * 2)));
-    GPIOB->AFR[1]  &= ~((0xFU << ((12U - 8U) * 4)) | (0xFU << ((13U - 8U) * 4)) | (0xFU << ((15U - 8U) * 4)));
-    GPIOB->AFR[1]  |=  ((0x5U << ((12U - 8U) * 4)) | (0x5U << ((13U - 8U) * 4)) | (0x5U << ((15U - 8U) * 4)));
+    GPIO_AF_CONFIG(GPIOB, I2S2_WS_PIN, 5);
+    GPIO_AF_CONFIG(GPIOB, I2S2_CK_PIN, 5);
+    GPIO_AF_CONFIG(GPIOB, I2S2_SD_PIN, 5);
 
     // 4. I2S Philips Master Transmit, 16 бит данных в 32-битном фрейме
     // CHLEN=1 (32 бита на канал), DATLEN=00 (16 бит данных в 32-битном слоте)
@@ -89,12 +106,12 @@ void audio_init(void) {
     DMA1_Stream4->CR = 0;
     while (DMA1_Stream4->CR & DMA_SxCR_EN);
 
-    DMA1->HIFCR = 0x3DU;                                 // Сброс всех флагов Stream4
+    DMA1->HIFCR = DMA_STREAM4_ALL_FLAGS;                 // Сброс всех флагов Stream4
     DMA1_Stream4->FCR = 0x00000000;                      // Direct mode, FIFO выключен
 
     DMA1_Stream4->PAR  = (uint32_t)&(SPI2->DR);           // Адрес периферии — регистр данных SPI2
     DMA1_Stream4->M0AR = (uint32_t)audio_buffer;          // Адрес памяти — полный буфер целиком
-    DMA1_Stream4->NDTR = AUDIO_CHUNK_SIZE * 4;            // Длина в half-word (PSIZE=16bit)
+    DMA1_Stream4->NDTR = AUDIO_BUF_SIZE;                  // Длина в half-word (PSIZE=16bit)
 
     DMA1_Stream4->CR = (0U << DMA_SxCR_CHSEL_Pos)        // Channel 0 = SPI2_TX (см. RM0090 Table 42)
                      | (3U << DMA_SxCR_PL_Pos)            // Приоритет Very High
@@ -124,12 +141,20 @@ void audio_start(void) {
     SPI2->CR2 |= SPI_CR2_TXDMAEN;                       // 3. Разрешаем запросы DMA от передатчика (ТОЛЬКО ПОСЛЕДНИМ)
 }
 
+void audio_stop(void) {
+    SPI2->CR2 &= ~SPI_CR2_TXDMAEN;
+    DMA1_Stream4->CR &= ~DMA_SxCR_EN;
+    while (DMA1_Stream4->CR & DMA_SxCR_EN) __NOP();
+    DMA1->HIFCR = DMA_STREAM4_ALL_FLAGS;
+    SPI2->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
+}
+
 // HTIF срабатывает в середине буфера (DMA играет вторую половину -> первая свободна).
 // TCIF срабатывает в конце буфера (DMA зациклился на первую половину -> вторая свободна).
 // Прямой аналог HAL_I2S_TxHalfCpltCallback / HAL_I2S_TxCpltCallback.
 void DMA1_Stream4_IRQHandler(void) {
     uint32_t hisr = DMA1->HISR;
-    DMA1->HIFCR = 0x3DU;
+    DMA1->HIFCR = DMA_STREAM4_ALL_FLAGS;
 
     if (hisr & DMA_HISR_HTIF4) {
         if (callbacks.on_buffer_ready) {

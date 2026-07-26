@@ -36,6 +36,7 @@ SRCS = src/main.c \
        disp/lcd_io.c \
        audio/audio_i2s.c \
        audio/wav_player.c \
+       audio/audio_gen.c \
        fs/sdcard.c \
        fs/sdcard_dma.c \
        fs/diskio.c \

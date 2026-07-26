@@ -1,60 +1,65 @@
+// button.c
 #include "button.h"
 #include "common.h"
 #include "wav_player_ui.h"
 #include "stm32f4xx.h"
 #include "wav_player.h"
 
-// ---- Настраиваемые тайминги ----
-#define BTN_SAMPLE_PERIOD_MS   5
-#define BTN_DEBOUNCE_MS        30
-#define BTN_HOLD_MS            600
-#define BTN_REPEAT_MS          100  // Для быстрой перемотки
+// Настраиваемые тайминги для кнопок
+#define BTN_SAMPLE_PERIOD_MS 5      // Интервал опроса состояния кнопок (в миллисекундах)
+#define BTN_DEBOUNCE_MS 30          // Время антидребезга (в миллисекундах)
+#define BTN_HOLD_MS 600             // Время удержания для активации длительного нажатия (в миллисекундах)
+#define BTN_REPEAT_MS 100           // Время между повторными вызовами при удержании кнопки (в миллисекундах)
 
 // Определение пинов кнопок
 const Button_Pin_t buttonPins[BTN_COUNT] = {
     { GPIOB, 7, 1 },  // Кнопка 1 - ПРЕДЫДУЩИЙ ТРЕК (с удержанием)
     { GPIOB, 6, 1 },  // Кнопка 2 - ВОСПР/ПАУЗА
-    { GPIOB, 5, 1 },  // Кнопка 3 - СЛЕДУЮЩИЙ ТРЕК (с удержанием)  <-- ИСПРАВЛЕНО
+    { GPIOB, 5, 1 },  // Кнопка 3 - СЛЕДУЮЩИЙ ТРЕК (с удержанием)
     { GPIOB, 4, 0 },  // Кнопка 4
     { GPIOB, 3, 0 },  // Кнопка 5
 };
 
+// Обработчики кликов для каждой кнопки
 typedef void (*ButtonCallback)(void);
 
 static const ButtonCallback clickHandlers[BTN_COUNT] = {
-    button1_click, 
-    button2_click, 
-    button3_click, 
-    button4_click, 
+    button1_click,
+    button2_click,
+    button3_click,
+    button4_click,
     button5_click
 };
 
-// Обработчики длительных нажатий
+// Обработчики длительных нажатий для каждой кнопки
 static const ButtonCallback holdHandlers[BTN_COUNT] = {
     button1_hold,   // Кнопка 1 - перемотка назад
     NULL,           // Кнопка 2 - нет длинного нажатия
     button3_hold,   // Кнопка 3 - перемотка вперед
-    NULL,           // Кнопка 4 - нет длинного нажатия
-    NULL            // Кнопка 5 - нет длинного нажатия
+    NULL,           // Кнопка 4 - нет длительного нажатия
+    NULL            // Кнопка 5 - нет длительного нажатия
 };
 
+// Флаги кликов для каждой кнопки
 static volatile uint8_t clickFlags = 0;
 
+// Структура состояния для каждой кнопки
 typedef struct {
-    uint32_t pressStartTime;
-    uint32_t lastRepeatTime;
-    uint8_t  debounced;
-    uint8_t  holdTriggered;
-    uint8_t  clickFlag;  // Флаг, разрешающий клик
+    uint32_t pressStartTime;  // Время начала нажатия
+    uint32_t lastRepeatTime;  // Время последнего повторного вызова при удержании
+    uint8_t debounced;        // Флаг, указывающий на то, что кнопка отодвинулась (debounced)
+    uint8_t holdTriggered;    // Флаг, указывающий на то, что длительное нажатие уже обработано
+    uint8_t clickFlag;        // Флаг, разрешающий клик по умолчанию
 } ButtonState_t;
 
+// Состояния для всех кнопок
 static ButtonState_t btnState[BTN_COUNT] = {0};
 
-// === ИНИЦИАЛИЗАЦИЯ GPIO =====================================================
+// Инициализация GPIO для кнопок
 void buttons_init(void) {
     // Включаем тактирование GPIOB
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
-    
+
     for (uint8_t i = 0; i < BTN_COUNT; i++) {
         GPIO_TypeDef* port = buttonPins[i].port;
         uint8_t pin = buttonPins[i].pin;
@@ -68,7 +73,7 @@ void buttons_init(void) {
     }
 }
 
-// === ЧТЕНИЕ СОСТОЯНИЯ КНОПОК ================================================
+// Чтение состояния кнопок
 static uint16_t GET_BUTTONS_STATE(void) {
     uint16_t state = 0;
     for (uint8_t i = 0; i < BTN_COUNT; i++) {
@@ -79,7 +84,7 @@ static uint16_t GET_BUTTONS_STATE(void) {
     return state;
 }
 
-// === ОПРОС КНОПОК ===========================================================
+// Опрос кнопок с заданным интервалом
 static void Buttons_Poll(void) {
     static uint32_t lastSampleTime = 0;
     if ((ttms - lastSampleTime) < BTN_SAMPLE_PERIOD_MS) {
@@ -94,6 +99,7 @@ static void Buttons_Poll(void) {
 
         if (state & (1U << i)) {
             if (s->pressStartTime == 0) {
+                // Начало нажатия
                 s->pressStartTime = ttms;
                 s->debounced = 0;
                 s->holdTriggered = 0;
@@ -102,33 +108,31 @@ static void Buttons_Poll(void) {
 
             uint32_t heldFor = ttms - s->pressStartTime;
 
-            // Debounce
             if (!s->debounced && heldFor >= BTN_DEBOUNCE_MS) {
+                // Антидребезг завершен
                 s->debounced = 1;
                 s->lastRepeatTime = ttms;
-            } 
-            // Обработка длительного нажатия
-            else if (s->debounced && !s->holdTriggered && 
-                     buttonPins[i].repeatEnabled && heldFor >= BTN_HOLD_MS) {
+            } else if (s->debounced && !s->holdTriggered &&
+                       buttonPins[i].repeatEnabled && heldFor >= BTN_HOLD_MS) {
+                // Длительное нажатие обработано
                 if (holdHandlers[i] != NULL) {
                     holdHandlers[i]();
                     s->holdTriggered = 1;
                     s->lastRepeatTime = ttms;
                     s->clickFlag = 0;  // Отменяем клик
                 }
-            }
-            // Повторные вызовы для перемотки
-            else if (s->debounced && s->holdTriggered && 
-                     buttonPins[i].repeatEnabled &&
-                     (ttms - s->lastRepeatTime) >= BTN_REPEAT_MS) {
+            } else if (s->debounced && s->holdTriggered &&
+                       buttonPins[i].repeatEnabled &&
+                       (ttms - s->lastRepeatTime) >= BTN_REPEAT_MS) {
+                // Повторный вызов при удержании кнопки
                 if (holdHandlers[i] != NULL) {
                     holdHandlers[i]();
                     s->lastRepeatTime = ttms;
                 }
             }
         } else {
-            // Кнопка отпущена - если был клик и не было длительного нажатия
             if (s->debounced && !s->holdTriggered && s->clickFlag) {
+                // Обработка клика
                 clickFlags |= (1U << i);
             }
             s->pressStartTime = 0;
@@ -139,7 +143,7 @@ static void Buttons_Poll(void) {
     }
 }
 
-// === ГЛАВНЫЙ ЦИКЛ ОБРАБОТКИ КНОПОК =========================================
+// Главный цикл обработки кнопок
 void button_process(uint32_t interval_ms) {
     static uint32_t last_btn_time = 0;
     if ((ttms - last_btn_time) < interval_ms) {
@@ -151,13 +155,14 @@ void button_process(uint32_t interval_ms) {
 
     for (uint8_t i = 0; i < BTN_COUNT; i++) {
         if (clickFlags & (1U << i)) {
+            // Обработка клика
             clickFlags &= ~(1U << i);
             clickHandlers[i]();
         }
     }
 }
 
-// === БЛОКИРУЮЩЕЕ ОЖИДАНИЕ ЛЮБОЙ КНОПКИ =====================================
+// Блокирующее ожидание любой кнопки
 void button_waitanypress(void) {
     while (GET_BUTTONS_STATE() != 0) {
         Buttons_Poll();
@@ -178,7 +183,7 @@ void button_waitanypress(void) {
     clickFlags = 0;
 }
 
-// === ОБРАБОТЧИКИ КНОПОК =====================================================
+// Обработчики конкретных кнопок
 
 // Кнопка 1: ПРЕДЫДУЩИЙ ТРЕК (клик) / ПЕРЕМОТКА НАЗАД (удержание)
 void button1_click(void) {
@@ -196,7 +201,7 @@ void button3_click(void) {
 }
 
 void button1_hold(void) {
-        if (!wav_is_playing())
+    if (!wav_is_playing())
         return;
 
     uint32_t pos = wav_get_position();
@@ -207,11 +212,12 @@ void button1_hold(void) {
     else
         wav_seek(0);
 }
+
 void button3_hold(void) {
-        if (!wav_is_playing())
+    if (!wav_is_playing())
         return;
 
-    uint32_t pos  = wav_get_position();
+    uint32_t pos = wav_get_position();
     uint32_t size = wav_get_total_size();
 
     uint32_t step = wav_get_sample_rate() * wav_get_channels() * 2 * 5;
@@ -224,12 +230,10 @@ void button3_hold(void) {
     wav_seek(pos);
 }
 
-// Кнопка 4
 void button4_click(void) {
     // Можно добавить функцию позже
 }
 
-// Кнопка 5 (переключение каталога)
 void button5_click(void) {
     wav_playerui_switch_directory();
 }

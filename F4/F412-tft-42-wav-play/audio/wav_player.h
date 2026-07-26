@@ -1,17 +1,19 @@
 #ifndef __WAV_PLAYER_H__
 #define __WAV_PLAYER_H__
 #include "stm32f4xx.h"
+#include "audio_i2s.h"  // для AUDIO_CHUNK_SIZE
 
 // === ВЫБОР РЕЖИМА РАСПАКОВКИ ================================================
 // Раскомментируйте нужный режим:
-#define WAV_MODE_FAST_HALF  // Быстрый: деление на 2 (1 такт)
+// #define WAV_MODE_FAST_HALF  // Быстрый: деление на 2 (1 такт)
 // #define WAV_MODE_AMPLITUDE // Точный: умножение на коэффициент
-//#define WAV_MODE_PASSTHROUGH  // Прямой: без обработки
+#define WAV_MODE_PASSTHROUGH  // Прямой: без обработки
 
-static inline void dma_stream4_wait_stop(void) {
-    while (DMA1_Stream4->CR & DMA_SxCR_EN)
-        __NOP();
-}
+// Размер одного аудиофрейма в байтах (16-bit PCM)
+#define WAV_FRAME_SIZE(ch) ((ch) * 2)
+
+// Размер одного DMA-полубуфера в байтах
+#define WAV_HALF_BYTES (AUDIO_CHUNK_SIZE * 2 * sizeof(uint16_t))
 
 uint8_t wav_play(const char* filename);
 void    wav_stop(void);
