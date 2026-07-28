@@ -2,24 +2,26 @@
 #include "common.h"
 #include "wav_player_ui.h"
 #include "button.h"
+#include "audio_gen.h"
 
+#define GENERATOR
+//#define DEFPLAYER
 int main(void) {
-  hw_init();            // 1. Глобальный запуск всей аппаратной периферии микроконтроллера
-  buttons_init();       // 2. Инициализация кнопок (GPIO)
-  wav_playerui_init();  // 3. Инициализация внутренней логики Shuffle-плеера и сканирование папки
-
+  hw_init();            
+#if defined(DEFPLAYER)
+  buttons_init();       
+  wav_playerui_init();  
+#elif defined(GENERATOR)
+  // Запуск: 1050 Гц, Половина амплитуды, играть 95 секунд
+  audio_gen_start(AUDIO_GEN_SAWTOOTH, AUDIO_VOLUME_FULL, 95000);  
+#endif  
   while (1) {
-    blink_led(500);          // Фоновое мигание статус-диода от SysTick
-    button_process(20);      // Обработка кнопок (каждые 20 мс)
-    wav_playerui_process();  // Основная логика плеера
+    blink_led(500);          
+#if defined(DEFPLAYER)
+    button_process(20);      
+    wav_playerui_process();  
+#elif defined(GENERATOR)
+    audio_gen_process(); // Автоматически остановит I2S через 95 секунд
+#endif
   }
 }
-
-/*
-Для теста в main.c сделать:
-#include "audio_gen.h"
-// в main() после hw_init():
-audio_gen_start(AUDIO_GEN_SINE, 1000, 8000, 5000);  // 1 кГц, 5 сек
-// и в while(1) добавить:
-audio_gen_process();
-*/

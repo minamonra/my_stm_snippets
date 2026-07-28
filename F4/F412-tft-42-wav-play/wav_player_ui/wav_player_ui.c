@@ -333,7 +333,8 @@ void wav_playerui_init(void) {
   wav_play("");
   p.dir_total_count = dir_manager_scan_total();  // Сканируем доступные каталоги
   p.dir_current_idx = 0;
-  if (p.dir_total_count == 0 || !dir_manager_get_path_by_index(p.dir_current_idx, p.current_dir_path, sizeof(p.current_dir_path))) {
+  if (p.dir_total_count == 0 ||
+     !dir_manager_get_path_by_index(p.dir_current_idx, p.current_dir_path, sizeof(p.current_dir_path))) {
     while (1)
       blink_led(200);
   }

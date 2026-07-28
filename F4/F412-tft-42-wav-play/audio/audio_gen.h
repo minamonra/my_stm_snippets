@@ -1,29 +1,26 @@
-#ifndef __AUDIO_GEN_H__
-#define __AUDIO_GEN_H__
+#ifndef AUDIO_GEN_H
+#define AUDIO_GEN_H
 
-#include "stm32f4xx.h"
+#include <stdint.h>
 
-// Типы генерируемых сигналов
+// Новые типы сигналов
 typedef enum {
-    AUDIO_GEN_SINE,       // Синус
-    AUDIO_GEN_TRIANGLE,   // Треугольник
-    AUDIO_GEN_SQUARE,     // Меандр
+    AUDIO_GEN_SINE = 0,          // Синусоида
+    AUDIO_GEN_TRIANGLE,          // Треугольник (симметричный)
+    AUDIO_GEN_SQUARE,            // Меандр (трапеция)
+    AUDIO_GEN_SAWTOOTH           // Пила (линейный подъем)
 } audio_gen_type_t;
 
-// Запустить генерацию сигнала.
-// freq_hz    — частота в Гц (1 .. 22050)
-// amplitude  — амплитуда (0..32767), 8000 = ~25% от макс.
-// duration_ms — длительность в мс (0 = бесконечно)
-// type       — форма сигнала
-void audio_gen_start(audio_gen_type_t type, uint32_t freq_hz, uint16_t amplitude, uint32_t duration_ms);
+// Две опции для амплитуды
+typedef enum {
+    AUDIO_VOLUME_HALF = 0,       // Половина громкости (16384)
+    AUDIO_VOLUME_FULL            // Полная громкость (32767)
+} audio_gen_volume_t;
 
-// Остановить генерацию
-void audio_gen_stop(void);
-
-// Проверить, активна ли генерация
+// Публичный API генератора — ТЕПЕРЬ СТРОГО 3 АРГУМЕНТА
+void    audio_gen_start(audio_gen_type_t type, audio_gen_volume_t volume, uint32_t duration_ms);
+void    audio_gen_stop(void);
 uint8_t audio_gen_is_active(void);
+void    audio_gen_process(void);
 
-// Вызывать в main loop для обработки остановки по окончании
-void audio_gen_process(void);
-
-#endif // __AUDIO_GEN_H__
+#endif // AUDIO_GEN_H

@@ -1,0 +1,35 @@
+#include "stm32f4xx.h"
+#include "common.h"
+#include "wav_player_ui.h"
+#include "button.h"
+#include "audio_gen.h"
+
+#define DEFPLAYER
+//#define GENERATOR
+int main(void) {
+  hw_init();            // 1. Глобальный запуск всей аппаратной периферии микроконтроллера
+#if defined(DEFPLAYER)
+  buttons_init();       // 2. Инициализация кнопок (GPIO)
+  wav_playerui_init();  // 3. Инициализация внутренней логики Shuffle-плеера и сканирование папки
+#elif defined(GENERATOR)
+  audio_gen_start(AUDIO_GEN_SINE, 1000, 8000, 95000);  // 1 кГц, 5 сек
+#endif  
+  while (1) {
+    blink_led(500);          // Фоновое мигание статус-диода от SysTick
+#if defined(DEFPLAYER)
+    button_process(20);      // Обработка кнопок (каждые 20 мс)
+    wav_playerui_process();  // Основная логика плеера
+#elif defined(GENERATOR)
+    audio_gen_process();
+#endif
+  }
+}
+
+/*
+Для теста в main.c сделать:
+#include "audio_gen.h"
+// в main() после hw_init():
+audio_gen_start(AUDIO_GEN_SINE, 1000, 8000, 5000);  // 1 кГц, 5 сек
+// и в while(1) добавить:
+audio_gen_process();
+*/

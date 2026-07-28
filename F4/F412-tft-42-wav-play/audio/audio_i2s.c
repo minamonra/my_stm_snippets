@@ -26,7 +26,9 @@
         *afr |=  ((af)  << (afr_pin * 4)); \
     } while (0)
 
-__attribute__((aligned(4))) static uint16_t audio_buffer[AUDIO_BUF_SIZE];
+//__attribute__((aligned(4))) static uint16_t audio_buffer[AUDIO_BUF_SIZE];
+
+uint16_t audio_buffer[AUDIO_BUF_SIZE];
 
 static audio_callbacks_t callbacks = {0};
 
