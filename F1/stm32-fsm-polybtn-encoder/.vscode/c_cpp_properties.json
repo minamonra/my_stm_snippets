@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "name": "STM32",
+      "includePath": [
+        "${workspaceFolder}/core",
+        "${workspaceFolder}/core/m-profile",
+        "${workspaceFolder}/device/Include",
+        "${workspaceFolder}/src"
+      ],
+      "defines": [
+        "STM32F103xB",
+        "STM32F1",
+        "F_CPU=72000000UL",
+        "DEBUG"
+      ],
+      "compilerPath": "arm-none-eabi-gcc",
+      "cStandard": "c99",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "gcc-arm",
+      "compilerArgs": [
+        "-mcpu=cortex-m3",
+        "-mthumb"
+      ]
+    }
+  ],
+  "version": 4
+}
