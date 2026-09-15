@@ -14,9 +14,9 @@
 void rs485_init_9n1(void);
 void usart1_send9_buffer(const uint16_t *words, size_t count);
 void send2blink_panel(const char *utf8_text); // Функция теперь принимает UTF-8 строку напрямую
-void reverseString(const char* input, char* output, int length);
+void reverse_str(const char* input, char* output, int length);
 void calc_panel_crc(const uint16_t buffer[], size_t length, uint16_t *byte13, uint16_t *byte14);
-void convertToCharArray(int number, char* result);
+void convert2char_arr(int number, char* result);
 void utf8_to_panel_string(const char *utf8_in, char *panel_out);
 
 #endif // __RS485_H__

@@ -17,10 +17,10 @@ extern volatile int32_t disp_counter_2;
 void check_text_timeout(void);
 
 int main(void) {
-  StartHSE();       // Разгон ядра до 72 МГц
-  hardware_init();  // Инициализация портов, SysTick и AFIO
+  StartHSE();        // 72 МГц
+  hardware_init();   // Инициализация портов, SysTick и AFIO
 
-  lcd_init();        // Тройной запуск An6866
+  lcd_init();        // Инициализация дисплея
   encoder_init();    // Инициализация пинов PB12/PB13
   btn_modes_init();  // Инициализация движка режимов
 
@@ -32,7 +32,7 @@ int main(void) {
   while(1) {
     // Подкапотные неблокирующие рантайм механизмы опроса железа
     button_process();  // Клавиатура
-    encoder_process(); // Энкодер Грея
+    encoder_process(); // Энкодер
 
     check_text_timeout(); // Автосброс временных надписей
 

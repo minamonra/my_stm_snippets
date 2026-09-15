@@ -1,14 +1,14 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef __COMMON_H__
+#define __COMMON_H__
 
 #include "stm32f103xb.h"
 #include <string.h>
 
-/* Твои макросы для переключения светодиодов */
+// Макросы для переключения светодиодов
 #define LED1TOGGLE GPIOC->ODR ^= (1<<13)
 #define LED2TOGGLE GPIOC->ODR ^= (1<<14)
 
-/* Удобные макросы для конфигурации портов ввода-вывода (CRL / CRH) */
+// Макросы для конфигурации портов ввода-вывода (CRL / CRH)
 #define CRL(pin, config)       ((config) << ((pin) * 4))
 #define CRH(pin, config)       ((config) << (((pin) - 8) * 4))
 
@@ -26,17 +26,17 @@
 #define CNF_AFPP               0x08U
 #define CNF_AFOD               0x0CU
 
-/* Управление включением питания блинкерной панели (PA0) */
-#define PANEL_POWER_ON   GPIOA->BSRR = (1U << 0)   /* Выдать 3.3В на PA0 */
-#define PANEL_POWER_OFF  GPIOA->BRR  = (1U << 0)   /* Опустить PA0 в 0В */
+// Управление включением питания блинкерной панели (PA0)
+#define PANEL_POWER_ON   GPIOA->BSRR = (1U << 0)   // Выдать 3.3В на PA0
+#define PANEL_POWER_OFF  GPIOA->BRR  = (1U << 0)   // Опустить PA0 в 0В
 
-/* Внешние объявления переменных, физически лежащих в common.c */
+// Внешние объявления переменных, физически лежащих в common.c
 extern volatile uint32_t ttms;
 extern volatile uint32_t ddms;
 extern volatile uint32_t pc13ms;
 extern volatile uint32_t pc14ms;
 
-/* Прототипы функций */
+// Прототипы функций
 void StartHSE(void);
 void hardware_init(void);
 void delay_ms(uint16_t ms);
@@ -47,4 +47,4 @@ void trim_and_clean_string(char *str, size_t max_len);
 uint16_t simple_rand(void);
 void safe_strncpy(char *dest, const char *src, size_t n);
 
-#endif /* COMMON_H */
+#endif // __COMMON_H__

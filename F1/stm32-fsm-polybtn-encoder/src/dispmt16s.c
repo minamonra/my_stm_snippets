@@ -2,6 +2,11 @@
 #include "common.h"
 #include <stddef.h>
 
+// Дисплей MT16S-2D-2YLG
+// на основе примеров отсюда:
+// https://www.melt.com.ru/shop/mt-16s2d-2ylg-2.html
+
+
 // Константы таймингов для delay_nop (1 в 1 из оригинального серийного проекта)
 #define SDELAY 36     // ~500ns (строб EN)
 #define LDELAY 720    // ~10μs (пауза после ниббла)
