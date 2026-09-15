@@ -20,7 +20,7 @@ void action_main_hold_1(void) {
   disp_counter_1--;
   if (disp_counter_1 < 0) disp_counter_1 = 99;
   disp_current_string = "ИЗМЕНЕНИЕ СЧ1";
-  disp_timeout_ms = ttms + 500; // Держим статус 500 мс после отпускания
+  disp_timeout_ms = ttms + 500; // Статус удержания держится 500 мс после отпускания
   disp_need_update = 1;
 }
 
@@ -35,7 +35,8 @@ void action_main_hold_2(void) {
 void action_main_double_5(void) {
   disp_counter_1 = 0;
   disp_counter_2 = 0;
-  disp_current_string = "СБРОС СЧЕТЧИКОВ";
+  disp_last_base_string = "СБРОС СЧЕТЧИКОВ";
+  disp_current_string = disp_last_base_string;
   disp_timeout_ms = ttms + 1000; // Статус сброса держим 1 секунду
   disp_need_update = 1;
 }
@@ -45,7 +46,7 @@ void action_main_rotate(int8_t direction) {
   if (disp_counter_2 > 99) disp_counter_2 = 0;
   if (disp_counter_2 < 0)  disp_counter_2 = 99;
 
-  // Кристально чистая реакция на знак направления
+  // Визуальный отклик направления по знаку импульса
   disp_current_string = (direction > 0) ? "ЭНК ВПРАВО" : "ЭНК ВЛЕВО";
 
   disp_timeout_ms = ttms + 300; // Вспышка направления на 300 мс
