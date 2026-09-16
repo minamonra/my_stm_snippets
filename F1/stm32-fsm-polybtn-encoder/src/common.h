@@ -41,6 +41,8 @@ void StartHSE(void);
 void hardware_init(void);
 void delay_ms(uint16_t ms);
 void delay_nop(uint32_t count);
+void blink13led(uint16_t ms);
+void blink14led(uint16_t ms);
 int replace_char_at(char *str, size_t position, char character, uint8_t edtstrlen);
 void pad_string_with_spaces(char *str, size_t current_len, size_t total_len);
 void trim_and_clean_string(char *str, size_t max_len);

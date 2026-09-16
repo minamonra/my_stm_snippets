@@ -158,6 +158,19 @@ void hardware_init(void) {
   PANEL_POWER_OFF;  // По умолчанию питание выключено
 }
 
+void blink13led(uint16_t ms){
+    if (pc13ms == 0) {
+      LED1TOGGLE;
+      pc13ms = ms;
+    }
+}
+void blink14led(uint16_t ms){
+    if (pc14ms == 0) {
+      LED2TOGGLE;
+      pc14ms = ms;
+    }
+}
+
 // Заменяет символ в строке по позиции
 int replace_char_at(char* str, size_t position, char character, uint8_t edtstrlen) {
   if (!str) return -1;
