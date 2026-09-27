@@ -15,11 +15,13 @@ void vLedTask(void *pvParameters) {
 
 int main(void) {
     // 1. Настройка тактирования микроконтроллера на 96 МГц
-    system_clock_config_96MHz();
+    clock_init();
 
     // 2. Инициализация аппаратной периферии (GPIO и т.д.)
     hw_init();
 
+    // ВАЖНО: Если внутри hw_init() у вас настраивался SysTick через SysTick_Config(),
+    // закомментируйте эту настройку. FreeRTOS сама настроит SysTick при старте.
 
     // 3. Создаем задачу мигания светодиодом
     xTaskCreate(

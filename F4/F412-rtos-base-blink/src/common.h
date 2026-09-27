@@ -5,38 +5,41 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef PROGMEM
-#define PROGMEM  // Заглушка для совместимости с AVR-кодом
-#endif
-
 #define u8  uint8_t
 #define u16 uint16_t
 #define u32 uint32_t
 
-// Регистры IWDG
-#define IWDG_REFRESH 0xAAAA  // Ключ для перезагрузки IWDG
+// Макросы сдвигов для регистров GPIO STM32F4 (по 2 бита на пин)
+#define GPIO_PIN_BIT2(pin, val)  ((val) << ((pin) * 2U))
+#define GPIO_PIN_MASK2(pin)      (3U << ((pin) * 2U))
+
+// Режимы работы (MODER)
+#define MODE_INPUT               0x00U // Вход
+#define MODE_OUTPUT              0x01U // Выход общего назначения
+#define MODE_AF                  0x02U // Альтернативная функция
+#define MODE_ANALOG              0x03U // Аналоговый режим
+
+// Скорость портов (OSPEEDR)
+#define SPEED_LOW                0x00U // Low speed (2 МГц)
+#define SPEED_MEDIUM             0x01U // Medium speed (25 МГц)
+#define SPEED_HIGH               0x02U // High speed (50 МГц)
+#define SPEED_VERY_HIGH          0x03U // Very high speed (100 МГц)
+
+// Подтяжка (PUPDR)
+#define PULL_NONE                0x00U // Без подтяжки
+#define PULL_UP                  0x01U // Pull-up к VDD
+#define PULL_DOWN                0x02U // Pull-down к GND
+
+// Тип выхода (OTYPER) — тут по 1 биту на пин
+#define TYPE_PP                  0x00U // Push-Pull
+#define TYPE_OD                  0x01U // Open-Drain
 
 #define LED_SYSTEM_PIN    GPIO_BSRR_BS2                 // Задаем маску для PB2 из вашего файла (равно 1U << 2)
-#define LED_SYSTEM_ON     GPIOB->BSRR = GPIO_BSRR_BR2   // Включить системный светодиод (низкий уровень на выходе)
-#define LED_SYSTEM_OFF    GPIOB->BSRR = LED_SYSTEM_PIN  // Выключить системный светодиод (высокий уровень на выходе)
+#define LED_SYSTEM_OFF    GPIOB->BSRR = GPIO_BSRR_BR2   // Включить системный светодиод (низкий уровень на выходе)
+#define LED_SYSTEM_ON     GPIOB->BSRR = LED_SYSTEM_PIN  // Выключить системный светодиод (высокий уровень на выходе)
 #define LED_SYSTEM_TOGGLE GPIOB->ODR ^= LED_SYSTEM_PIN  // Переключить состояние светодиода
 
-
-//extern volatile u32 ttms;  // Глобальный счётчик миллисекунд (SysTick)
-u32 get_tick_ms(void);
-
-void system_clock_config_96MHz(void);
+void clock_init(void);
 void hw_init(void);
-void delay_ms(u32 ms);
-void delay_nop(u32 ticks);
-void blink_led(u16 freq);                // freq — период переключения в мс
-void uint16_to_hex(u16 val, char* out);  // Конвертация uint16_t в 4-символьную HEX-строку
-u16  get_random(u16 max);
-void random_seed(u32 seed);
-u16  decode_utf8(const char** ptr);
-void format_time(u32 sec, char* buf);
-void uint32_to_str(u32 num, char* buf);
-int  strcasecmp(const char* s1, const char* s2);
-
 
 #endif  // __COMMON_H__

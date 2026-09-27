@@ -1,0 +1,27 @@
+[
+    {
+        "key": "ctrl+l",
+        "command": "-workbench.action.chat.open",
+        "when": "chatContext"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-inlineChat.start",
+        "when": "editorTextBoxFocus && inlineChatPossible"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-workbench.action.chat.addContext",
+        "when": "chatContext"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-workbench.action.chat.openInEditor",
+        "when": "chatContext"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "expandLineSelection",
+        "when": "editorTextFocus && !editorReadonly"
+    }
+]
