@@ -73,35 +73,36 @@ void hw_init(void) {
   // Включаем FPU
   SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2)); __DSB(); __ISB();
 
-  // Включаем аппаратный кэш ядра Cortex-M4 (инструкции, данные, prefetch)
+  // Включаем аппаратный кэш
   FLASH->ACR |= FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_PRFTEN;
 
-  // Включаем тактирование портов A, B, C
+  // Включаем тактирование портов
   RCC->AHB1ENR |= (RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN);
   delay_nop(10);
 
   // === НАСТРОЙКА LED (PB2) ===
-  GPIOB->MODER   = (GPIOB->MODER   & ~GPIO_PIN_MASK2(2)) | GPIO_PIN_BIT2(2, MODE_OUTPUT);
-  GPIOB->OSPEEDR = (GPIOB->OSPEEDR & ~GPIO_PIN_MASK2(2)) | GPIO_PIN_BIT2(2, SPEED_HIGH);
-  GPIOB->OTYPER &= ~(1U << 2); // Сброс в Push-Pull (TYPE_PP)
+  GPIOB->MODER   &= ~GPIO_MODER_MODER2;
+  GPIOB->MODER   |= PIN_CONF(2, MODE_OUTPUT); // PB2 на вывод
+  GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED2;
+  GPIOB->OSPEEDR |= PIN_CONF(2, SPEED_HIGH);  // PB2 высокая скорость
+  GPIOB->OTYPER  &= ~(1U << 2);               // PB2 в Push-Pull
   LED_SYSTEM_OFF;
 
   // === НАСТРОЙКА КНОПКИ USER (PC13) ===
-  GPIOC->MODER   = (GPIOC->MODER   & ~GPIO_PIN_MASK2(13)) | GPIO_PIN_BIT2(13, MODE_INPUT);
-  GPIOC->PUPDR   = (GPIOC->PUPDR   & ~GPIO_PIN_MASK2(13)) | GPIO_PIN_BIT2(13, PULL_DOWN);
+  GPIOC->MODER   &= ~GPIO_MODER_MODER13;
+  GPIOC->MODER   |= PIN_CONF(13, MODE_INPUT); // PC13 на вход
+  GPIOC->PUPDR   &= ~GPIO_PUPDR_PUPDR13;
+  GPIOC->PUPDR   |= PIN_CONF(13, PULL_DOWN);  // PC13 подтяжка вниз к GND
 
-  // === ОТКЛЮЧЕНИЕ JTAG (ОСВОБОЖДАЕМ PA15, PB3, PB4, СОХРАНЯЯ SWD) ===
-  GPIOA->MODER &= ~(GPIO_PIN_MASK2(15)); // PA15 = Вход (Очистка альтернативной функции)
-  GPIOB->MODER &= ~(GPIO_PIN_MASK2(3) | GPIO_PIN_MASK2(4)); // PB3, PB4 = Вход
+  // === ОТКЛЮЧЕНИЕ JTAG (PA15, PB3, PB4) ===
+  GPIOA->MODER   &= ~GPIO_MODER_MODER15;      // Освобождаем PA15 в Input
+  GPIOB->MODER   &= ~(GPIO_MODER_MODER3 | GPIO_MODER_MODER4); // Освобождаем PB3 и PB4 в Input
 
   // Для отладки MCO1 на PA8
 #ifdef DEBUG
-  // PA8 в режим альтернативной функции
-  GPIOA->MODER = (GPIOA->MODER & ~GPIO_PIN_MASK2(8)) | GPIO_PIN_BIT2(8, MODE_AF);
-
-  // Привязываем PA8 к AF0 (MCO1) через регистр высокой части AFR[1]
-  GPIOA->AFR[1] &= ~(GPIO_AFRH_AFSEL8);
-  GPIOA->AFR[1] |=  (0U << GPIO_AFRH_AFSEL8_Pos);
+  GPIOA->MODER   &= ~GPIO_MODER_MODER8;
+  GPIOA->MODER   |= PIN_CONF(8, MODE_AF);     // PA8 в режим альт. функции
+  GPIOA->AFR[1]  &= ~GPIO_AFRH_AFSEL8;        // Привязка PA8 к AF0 (MCO1)
 #endif
 }
 
