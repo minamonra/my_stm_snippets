@@ -61,12 +61,6 @@ pll_start:
   RCC->CFGR &= ~RCC_CFGR_SW; // Очистка SW
   RCC->CFGR |= RCC_CFGR_SW_PLL; // Переход на PLL
   while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL); // Ждем PLL
-
-#ifdef DEBUG
-  RCC->CFGR &= ~(RCC_CFGR_MCO1 | RCC_CFGR_MCO1PRE); // Сброс битов MCO1 и делителя
-  RCC->CFGR |= (3U << RCC_CFGR_MCO1_Pos) | (6U << RCC_CFGR_MCO1PRE_Pos); // MCO1 = PLL / 4
-#endif
-
 }
 
 void hw_init(void) {
@@ -85,11 +79,6 @@ void hw_init(void) {
   GPIOC->MODER   &= ~(GPIO_MODER_MODER13); // PC13 = Вход
   GPIOC->PUPDR   &= ~(GPIO_PUPDR_PUPDR13); // Сброс подтяжки
   GPIOC->PUPDR   |=  (GPIO_PUPDR_PUPDR13_1); // PC13 = Pull-down
-
-#ifdef DEBUG
-  GPIOA->AFR[1] &= ~(GPIO_AFRH_AFSEL8); // Очистка AF8
-  GPIOA->AFR[1] |=  (0U << GPIO_AFRH_AFSEL8_Pos); // PA8 = MCO1
-#endif
 }
 
 void delay_ms(u32 ms) {
