@@ -1,7 +1,6 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-// Включаем заголовочный файл CMSIS вашего микроконтроллера
 #include "stm32f4xx.h"
 
 // Основные настройки ядра

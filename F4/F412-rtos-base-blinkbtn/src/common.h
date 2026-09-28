@@ -9,12 +9,12 @@
 #define u16 uint16_t
 #define u32 uint32_t
 
-// Универсальный макрос сдвига конфигурации (2 бита на пин, для любого пина 0-15)
+// Сдвиг конфигурации (2 бита на пин, для любого пина 0-15)
 #define PIN_CONF(pin, val)   ((val) << ((pin) * 2U))
 
 // Режимы работы (MODER)
 #define MODE_INPUT           0x00U // Вход
-#define MODE_OUTPUT          0x01U // Выход общего назначения
+#define MODE_OUTPUT          0x01U // Выход
 #define MODE_AF              0x02U // Альтернативная функция
 #define MODE_ANALOG          0x03U // Аналоговый режим
 
@@ -30,9 +30,9 @@
 #define PULL_DOWN            0x02U // Pull-down к GND
 
 
-#define LED_SYSTEM_PIN    GPIO_BSRR_BS2                 // Задаем маску для PB2 из вашего файла (равно 1U << 2)
-#define LED_SYSTEM_OFF    GPIOB->BSRR = GPIO_BSRR_BR2   // Включить системный светодиод (низкий уровень на выходе)
-#define LED_SYSTEM_ON     GPIOB->BSRR = LED_SYSTEM_PIN  // Выключить системный светодиод (высокий уровень на выходе)
+#define LED_SYSTEM_PIN    GPIO_BSRR_BS2                 // Ммаску для PB2 (1U << 2)
+#define LED_SYSTEM_OFF    GPIOB->BSRR = GPIO_BSRR_BR2   // Включить - низкий уровень
+#define LED_SYSTEM_ON     GPIOB->BSRR = LED_SYSTEM_PIN  // Выключить - высокий уровень
 #define LED_SYSTEM_TOGGLE GPIOB->ODR ^= LED_SYSTEM_PIN  // Переключить состояние светодиода
 
 void clock_init(void);

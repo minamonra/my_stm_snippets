@@ -10,13 +10,13 @@ typedef enum {
 } led_mode_t;
 
 // Тайминги и константы кнопки
-#define T_DEBOUNCE_MS     20U  // Антидребезг
+#define T_DEBOUNCE_MS     20U   // Антидребезг
 #define T_LONG_PRESS_MS   1000U // Порог удержания
-#define T_POLL_MS         20U  // Период опроса
-#define T_BLINK_SLOW_MS   500U // Период медленный
-#define T_BLINK_FAST_MS   150U // Период быстрый
-#define T_ALWAYS_ON_MS    50U  // Период удержания ON
-#define PRIORITY_NORMAL   1U   // Равный приоритет задач
+#define T_POLL_MS         20U   // Период опроса
+#define T_BLINK_SLOW_MS   500U  // Период медленный
+#define T_BLINK_FAST_MS   150U  // Период быстрый
+#define T_ALWAYS_ON_MS    50U   // Период удержания ON
+#define PRIORITY_NORMAL   1U    // Равный приоритет задач
 
 static volatile led_mode_t current_mode = LED_SLOW; // Текущий режим
 
@@ -78,7 +78,7 @@ void task_btn(void *pvParameters) {
 
 int main(void) {
     clock_init(); // Запуск 96МГц
-    hw_init(); // Запуск GPIO
+    hw_init(); // Запуск GPIO и остального
 
     xTaskCreate(task_led, "led", configMINIMAL_STACK_SIZE, NULL, PRIORITY_NORMAL, NULL); // Таск LED
     xTaskCreate(task_btn, "btn", configMINIMAL_STACK_SIZE, NULL, PRIORITY_NORMAL, NULL); // Таск кнопки

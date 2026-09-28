@@ -1,14 +1,13 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-// Включаем заголовочный файл CMSIS вашего микроконтроллера
 #include "stm32f4xx.h"
 
 // Основные настройки ядра
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configCPU_CLOCK_HZ                      (96000000UL) // Ваша частота 96 МГц
+#define configCPU_CLOCK_HZ                      (96000000UL) // частота 96 МГц
 #define configTICK_RATE_HZ                      ((TickType_t)1000) // 1 тик = 1 мс
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                ((unsigned short)128)
