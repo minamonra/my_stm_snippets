@@ -1,5 +1,5 @@
 #include <stm32f0xx.h>
-// Тоже софт реализация TM1538 SPI
+// Тоже софт реализация TM1638 SPI
 // была написана кем-то для PIC, переделал на STM32F0
 // PB3 = CLK (clock), PB4 = chipselect (MISO), PB5 = data (MOSI)
 // Подключение к TM1638
