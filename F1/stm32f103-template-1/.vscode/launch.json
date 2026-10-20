@@ -2,23 +2,24 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Cortex Debug (DAP-Link)",
+      "name": "Debug STM32F103C8T6 (OpenOCD)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "openocd",
       "cwd": "${workspaceFolder}",
       "executable": "${workspaceFolder}/build/main.elf",
-      "request": "launch",
-      "type": "cortex-debug",
-      "runToEntryPoint": "main",
-      "servertype": "openocd",
+      "device": "STM32F103C8",
+      "toolchainPrefix": "arm-none-eabi-",
+      "gdbPath": "arm-none-eabi-gdb",
       "configFiles": [
-        "interface/cmsis-dap.cfg",
-        "target/stm32f1x.cfg"
+        "openocd/stm32f103c8t6.cfg"
       ],
       "svdFile": "${workspaceFolder}/core/stm32f103.svd",
-      "liveWatch": {
-        "enabled": true
-      },
-      "preLaunchTask": "build",
-      "postDebugTask": "Monitor resume"
+      "runToEntryPoint": "main",
+      "showDevDebugOutput": "none"
     }
   ]
 }
+// "showDevDebugOutput": "raw"
+// "verbose" — тоже полезно: показывает человекочитаемые сообщения, но без MI-протокола.
+// "showDevDebugOutput": "none"

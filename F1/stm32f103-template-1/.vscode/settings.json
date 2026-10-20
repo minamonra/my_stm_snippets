@@ -29,7 +29,10 @@
   "python-envs.defaultEnvManager": "ms-python.python:system",
 
   // Отключаем проверки типов Pylance (скрипты - вспомогательные)
-  "python.analysis.typeCheckingMode": "off"
+  "python.analysis.typeCheckingMode": "off",
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }
 // "python.analysis.typeCheckingMode": "off"
 // files.exclude скрывает папку из дерева файлов, но не отключает Pylance — он всё равно проанализирует файл, если он открыт.

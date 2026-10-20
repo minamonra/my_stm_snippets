@@ -1,5 +1,6 @@
 build/
 .vscode/.cache/
 .cmsis_backup/
+.vscode/py_scripts/__pycache__/
 .vscode/compile_commands.json
 .vscode/memory_config.json

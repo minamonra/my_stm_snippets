@@ -19,7 +19,10 @@ CFLAGS += -MMD -MP -fdata-sections -ffunction-sections
 ASFLAGS = $(MCU) -g3 -O0
 
 #LDFLAGS = $(MCU) -Tcore/stm32f103c8tx_flash.ld --specs=nano.specs -Wl,--gc-sections -Wl,--no-warn-rwx-segments -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
-LDFLAGS = $(MCU) -Tcore/stm32f103c8tx_flash.ld --specs=nano.specs -Wl,--gc-sections -Wl,--no-warn-rwx-segments -Wl,--print-memory-usage -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+LDFLAGS =	$(MCU) \
+			-Tcore/stm32f103c8tx_flash.ld --specs=nano.specs -Wl,--gc-sections \
+			-Wl,--no-warn-rwx-segments -Wl,--print-memory-usage -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+			
 # ============================================================================
 # АВТОМАТИЧЕСКИЙ ПОИСК ФАЙЛОВ
 # ============================================================================
@@ -86,22 +89,59 @@ ELF_FILE      = build/main.elf
 MAP_FILE      = build/main.map
 SIZE_TOOL     = arm-none-eabi-size
 ANALYZER      = .vscode/py_scripts/build_analyzer.py
-COMPILE_DB    = .vscode/compile_commands.json
 
-.PHONY: all clean compile_commands ld_analyzer memory_report size
+OPENOCD      = openocd
+OPENOCD_CFG  = -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg
+# Скорость SWD. 1000 kHz не работает с большинством CMSIS-DAP-проб,
+# 100 kHz - надёжно. При необходимости поднимите до 500.
+ADAPTER_SPEED ?= 100
 
-# База компиляции для clangd: генерируется из реальных команд Makefile
+.PHONY: all clean compile_commands ld_analyzer memory_report size kill-clangd \
+        flash flash-fast flash-erase mcu-reset mcu-halt gdbserver
+
+# База компиляции для clangd
 compile_commands:
 	@$(PYTHON) .vscode/py_scripts/gen_compile_db.py
 
-# Карта памяти из линкерного скрипта -> .vscode/memory_config.json
+# Карта памяти из линкерного скрипта
 ld_analyzer:
 	@$(PYTHON) $(ANALYZER) --ld $(LD_SCRIPT) --config $(MEMORY_CONFIG) --regen
 
-# Полный отчёт по занятости Flash/RAM
+# Отчёт по занятости Flash/RAM
 memory_report:
 	@$(PYTHON) $(ANALYZER) --ld $(LD_SCRIPT) --elf $(ELF_FILE) --map $(MAP_FILE) --config $(MEMORY_CONFIG) --size-tool $(SIZE_TOOL)
 
-# Только размеры
+# Размеры секций
 size:
 	$(SIZE) -A $(ELF_FILE)
+
+# Аварийный перезапуск clangd
+kill-clangd:
+	@taskkill /F /IM clangd.exe 2>nul || echo clangd not running
+
+# Прошить ELF, проверить и запустить.
+# "program ... verify" - залить и проверить,
+# "reset run"           - перезапустить МК (он останется работающим).
+# НЕ используйте "resume" после "reset run": цель уже не остановлена.
+flash: $(ELF_FILE)
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "init" -c "reset halt" -c "program $(ELF_FILE) verify" -c "reset run" -c "sleep 100" -c "exit"
+
+# То же, но прошивка без предварительной остановки
+flash-fast: $(ELF_FILE)
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "program $(ELF_FILE) verify reset exit"
+
+# Полное стирание флеши
+flash-erase:
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "init" -c "reset halt" -c "flash erase_sector 0 0 last" -c "reset run" -c "sleep 100" -c "exit"
+
+# Перезагрузить МК без прошивки
+mcu-reset:
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "init" -c "reset run" -c "sleep 200" -c "exit"
+
+# Остановить МК на паузе (для отладки)
+mcu-halt:
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "init" -c "reset halt" -c "sleep 100" -c "exit"
+
+# Отладочный сервер для ручного gdb (порт 3333)
+gdbserver:
+	@$(OPENOCD) $(OPENOCD_CFG) -c "adapter speed $(ADAPTER_SPEED)" -c "gdb_port 3333" -c "telnet_port 4444" -c "init" -c "reset halt"

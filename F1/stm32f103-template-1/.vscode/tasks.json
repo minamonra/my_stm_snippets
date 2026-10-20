@@ -28,7 +28,9 @@
       "detail": "Сборка (make -j12 all)",
       "type": "shell",
       "command": "make -j12 all",
-      "problemMatcher": ["$gcc"],
+      "problemMatcher": [
+        "$gcc"
+      ],
       "presentation": {
         "reveal": "always",
         "focus": false,
@@ -45,7 +47,9 @@
       "detail": "Собрать проект без анализатора памяти",
       "type": "shell",
       "command": "make -j12 all",
-      "problemMatcher": ["$gcc"],
+      "problemMatcher": [
+        "$gcc"
+      ],
       "presentation": {
         "reveal": "always",
         "focus": false,
@@ -177,9 +181,9 @@
     },
     {
       "label": "flash",
-      "detail": "Прошить build/main.elf в МК через CMSIS-DAP и запустить",
+      "detail": "Прошить build/main.elf в МК через OpenOCD и запустить",
       "type": "shell",
-      "command": "openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c \"program build/main.elf verify reset exit\"",
+      "command": "make flash",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
@@ -196,7 +200,7 @@
       "label": "Monitor resume",
       "detail": "Снять МК с паузы после закрытия отладчика",
       "type": "shell",
-      "command": "openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c \"init\" -c \"resume\" -c \"sleep 200\" -c \"exit\"",
+      "command": "make mcu-reset",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",

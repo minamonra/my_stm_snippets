@@ -516,3 +516,18 @@ clangd --check=src/main.c --compile-commands-dir=.vscode
 Показывает все диагностики разом, без ограничения "Too many errors".
 Требует `clangd` в PATH — путь к нему задаётся в настройках расширения
 (`clangd.path`) и указывает на бинарь в `globalStorage` расширения.
+
+
+### Типичные грабли clangd на STM32
+
+| Симптом | Причина | Решение |
+|---|---|---|
+| clangd не стартует, нет диагностик и автодополнения | неизвестный флаг в `clangd.arguments` (`--exclude`, `--log`) | оставить только `--background-index`, `--clang-tidy=false`, `--header-insertion=never`, `--query-driver=...` |
+| `cmsis_clang.h file not found` | CMSIS 6.x подключает `cmsis_clang.h` при `__clang__` | `-U__clang__` в `.clangd` |
+| `core_cm3.h file not found` | нет `-Icore` | продублировать все `-I` из Makefile |
+| `MPU undeclared` в `armv7m_mpu.h` | файл не нужен (STM32F103 без MPU), но clangd разбирает его изолированно | удалить файл |
+| `#error "FreeRTOS.h must be included before this file."` | заголовки открываются как самостоятельные файлы | `-include /rtos/include/FreeRTOS.h` в `.clangd` |
+| `configUSE_IDLE_HOOK must be defined` | FreeRTOS V11 требует макросы явно | задать в `FreeRTOSConfig.h` |
+| `xTaskCreate undeclared` | нет `#include "task.h"` в `main.c` | добавить (GCC 14+ считает это ошибкой) |
+| `cannot read IDR` | скорость SWD 1000 kHz слишком высокая | `adapter speed 100` |
+| `keep_alive() was not invoked` | SWD медленный, GDB не успевает | `set remotetimeout 10000` через `-iex` в обёртке GDB |
