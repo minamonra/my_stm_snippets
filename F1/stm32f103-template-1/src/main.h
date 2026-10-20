@@ -1,3 +1,6 @@
+#ifndef __MAIN_H__
+#define __MAIN_H__
+
 #include "stm32f1xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -27,3 +30,5 @@ void vApplicationMallocFailedHook(void) {
         __BKPT(0);
     }
 }
+
+#endif  // __MAIN_H__
