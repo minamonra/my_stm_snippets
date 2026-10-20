@@ -1,0 +1,213 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "detail": "Собрать проект и показать занятую Flash/RAM",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "make_all",
+        "ld_analyzer",
+        "Build Analyzer"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      }
+    },
+    {
+      "label": "make_all",
+      "detail": "Сборка (make -j12 all)",
+      "type": "shell",
+      "command": "make -j12 all",
+      "problemMatcher": ["$gcc"],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "build:fast",
+      "detail": "Собрать проект без анализатора памяти",
+      "type": "shell",
+      "command": "make -j12 all",
+      "problemMatcher": ["$gcc"],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "ld_analyzer",
+      "detail": "Создать .vscode/memory_config.json из .ld файла",
+      "type": "shell",
+      "command": "make ld_analyzer",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Build Analyzer",
+      "detail": "Красивый вывод занятой Flash и RAM",
+      "type": "shell",
+      "command": "make memory_report",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "rebuild",
+      "detail": "Очистить, пересобрать и показать занятую Flash/RAM",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "clean",
+        "make_all",
+        "ld_analyzer",
+        "Build Analyzer"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      }
+    },
+    {
+      "label": "clean",
+      "detail": "Очистить сборку",
+      "type": "shell",
+      "command": "make clean",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "compile_commands.json_update",
+      "detail": "Обновить compile_commands.json для clangd",
+      "type": "shell",
+      "command": "make compile_commands",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Restart Clangd Server",
+      "detail": "Перезагрузить языковой сервер clangd",
+      "type": "shell",
+      "command": "echo ${command:clangd.restart}",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "clear": false,
+        "echo": false
+      }
+    },
+    {
+      "label": "update_clangd",
+      "detail": "Обновить compile_commands.json и перезапустить clangd",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile_commands.json_update",
+        "Restart Clangd Server"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      }
+    },
+    {
+      "label": "flash",
+      "detail": "Прошить build/main.elf в МК через CMSIS-DAP и запустить",
+      "type": "shell",
+      "command": "openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c \"program build/main.elf verify reset exit\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Monitor resume",
+      "detail": "Снять МК с паузы после закрытия отладчика",
+      "type": "shell",
+      "command": "openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c \"init\" -c \"resume\" -c \"sleep 200\" -c \"exit\"",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true,
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

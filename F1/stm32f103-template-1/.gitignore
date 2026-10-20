@@ -1,0 +1,5 @@
+build/
+.vscode/.cache/
+.vscode/compile_commands.json
+.vscode/memory_config.json
+.cmsis_backup/

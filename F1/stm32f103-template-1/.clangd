@@ -1,0 +1,24 @@
+CompileFlags:
+  CompilationDatabase: .vscode
+  Compiler: arm-none-eabi-gcc
+  Add:
+    - -std=gnu11
+    - -DSTM32F103xB
+    - -DDEBUG
+    - -Icore
+    - -Icore/m-profile
+    - -Idevice/Include
+    - -Isrc
+    - -Irtos
+    - -Irtos/include
+    - -Irtos/portable/GCC/ARM_CM3
+    - -U__clang__
+    - -Wno-builtin-macro-redefined
+    - -Wno-unknown-pragmas
+    - -Wno-unknown-attributes
+
+Diagnostics:
+  UnusedIncludes: None
+  Suppress:
+    - pp_including_mainfile_in_preamble
+    - unused-includes
