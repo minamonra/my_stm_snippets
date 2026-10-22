@@ -1,0 +1,38 @@
+{
+  // Форматирование через clangd
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+
+  // Расширение Microsoft C/C++ отключено - работает только clangd
+  "C_Cpp.intelliSenseEngine": "disabled",
+
+  // Аргументы clangd.
+  // ВАЖНО: --exclude и --log не поддерживаются официальным расширением!
+  "clangd.arguments": [
+    "--background-index",
+    "--clang-tidy=false",
+    "--header-insertion=never",
+    "--query-driver=arm-none-eabi-gcc*"
+  ],
+
+  // Заголовки .h трактуем как C
+  "files.associations": {
+    "*.h": "c"
+  },
+
+  // Скрываем из дерева файлов
+  "files.exclude": {
+    "build": true
+  },
+
+  // Python: системный интерпретатор (не .venv)
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+
+  // Отключаем проверки типов Pylance (скрипты - вспомогательные)
+  "python.analysis.typeCheckingMode": "off",
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
+}
+// "python.analysis.typeCheckingMode": "off"
+// files.exclude скрывает папку из дерева файлов, но не отключает Pylance — он всё равно проанализирует файл, если он открыт.

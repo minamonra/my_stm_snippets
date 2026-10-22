@@ -1,0 +1,42 @@
+CompileFlags:
+  CompilationDatabase: .vscode
+  Compiler: arm-none-eabi-gcc
+  Add:
+    - -std=gnu11
+    - -DSTM32F103xB
+    - -DDEBUG
+    - -Icore
+    - -Icore/m-profile
+    - -Idevice/Include
+    - -Isrc
+    - -Irtos
+    - -Irtos/include
+    - -Irtos/portable/GCC/ARM_CM3
+
+    # clangd определяет __clang__ -> cmsis_compiler.h подключил бы
+    # cmsis_clang.h (Arm Compiler 6). Убираем макрос, чтобы clangd
+    # использовал ту же ветку GCC, что и реальная сборка.
+    - -U__clang__
+    - -Wno-builtin-macro-redefined
+    - -Wno-unknown-pragmas
+    - -Wno-unknown-attributes
+
+    # Принудительные включения. Нужны, чтобы clangd мог разбирать
+    # ЗАГОЛОВКИ как самостоятельные файлы (в базе компиляции их нет):
+    #   cmsis_compiler.h - даёт __STATIC_INLINE / __ASM для core/*.h
+    #   FreeRTOSConfig.h - макросы config*
+    #   FreeRTOS.h       - без него rtos/include/*.h дают #error
+    # Пути АБСОЛЮТНЫЕ: для заголовков относительные резолвятся
+    # относительно каталога самого файла, а не корня проекта.
+    - -include
+    - /core/cmsis_compiler.h
+    - -include
+    - /src/FreeRTOSConfig.h
+    - -include
+    - /rtos/include/FreeRTOS.h
+
+Diagnostics:
+  UnusedIncludes: None
+  Suppress:
+    - pp_including_mainfile_in_preamble
+    - unused-includes
