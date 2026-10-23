@@ -57,12 +57,10 @@ void ir_receiver_init(void) {
   TIM2->ARR = 0xFFFFU;
 
   // Режим PWM Input: CH1 на TI1 (спад), CH2 на TI1 (подъем), Жесткий фильтр = 7
-  TIM2->CCMR1 =
-      TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_1 | (7U << TIM_CCMR1_IC1F_Pos);
+  TIM2->CCMR1 = TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_1 | (7U << TIM_CCMR1_IC1F_Pos);
 
   // Полярность захвата
-  TIM2->CCER &=
-      ~(TIM_CCER_CC1P | TIM_CCER_CC1NP | TIM_CCER_CC2P | TIM_CCER_CC2NP);
+  TIM2->CCER &= ~(TIM_CCER_CC1P | TIM_CCER_CC1NP | TIM_CCER_CC2P | TIM_CCER_CC2NP);
   TIM2->CCER |= TIM_CCER_CC1P;  // CH1 - Falling edge
 
   // Включение захвата каналов
