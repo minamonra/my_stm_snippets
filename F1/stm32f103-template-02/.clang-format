@@ -1,3 +1,4 @@
+---
 BasedOnStyle: Google
 ColumnLimit: 0
 BinPackParameters: true
@@ -5,6 +6,10 @@ BinPackArguments: true
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: true
 IncludeBlocks: Merge
+SortIncludes: Never
+
+# Настройка скобок ({ на одной строке с функцией)
+BreakBeforeBraces: Attach
 BraceWrapping:
   AfterFunction: false
   AfterClass: false
@@ -16,7 +21,34 @@ BraceWrapping:
   BeforeCatch: false
   BeforeElse: false
   IndentBraces: false
-BreakBeforeBraces: Attach
-IndentWidth: 4
-AlignConsecutiveMacros: true
-SortIncludes: Never
+
+# Отступы и замена табов пробелами (включая комментарии)
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+# ВЫРАВНИВАНИЕ ДЕФАЙНОВ (МАКРОСОВ)
+# Настройка Consecutive: выравнивает дефайны в аккуратные колонки.
+# Чтобы длинные формулы приоритетов прерываний из конца файла не растягивали 
+# верхние компактные настройки планировщика, мы отключаем AcrossEmptyLines.
+# Блоки дефайнов будут выравниваться идеально ровно внутри своих разделов.
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+# Выравнивание знаков равенства '=' при многострочных присваиваниях
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+# Выравнивание комментариев, которые идут на одной строке с кодом
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 1
+
+# Жесткий запрет для clang-format трогать структуру ваших больших комментариев.
+# Все ваши текстовые схемы и описание ИК-кадра NEC гарантированно останутся нетронутыми!
+ReflowComments: false
+...

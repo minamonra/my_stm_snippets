@@ -1,13 +1,18 @@
 {
-  // Форматирование через clangd
-  "editor.formatOnSave": true,
+  // ОТКЛЮЧАЕМ автоформатирование при сохранении (будет строго по Alt+Shift+F)
+  "editor.formatOnSave": false,
+
+  // Устанавливаем размер таба в 2 символа для редактора
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true, // При нажатии Tab вставлять пробелы
+
+  // Глобальное форматирование через clangd
   "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
 
   // Расширение Microsoft C/C++ отключено - работает только clangd
   "C_Cpp.intelliSenseEngine": "disabled",
 
-  // Аргументы clangd.
-  // ВАЖНО: --exclude и --log не поддерживаются официальным расширением!
+  // АРГУМЕНТЫ CLANGD (Исправлено: убраны конфликтующие флаги компиляции)
   "clangd.arguments": [
     "--background-index",
     "--clang-tidy=false",
@@ -15,12 +20,16 @@
     "--query-driver=arm-none-eabi-gcc*"
   ],
 
+  // Жестко отключаем встроенные inlay-подсказки на уровне самого VS Code
+  "editor.inlayHints.enabled": "off",
+  "cSpellingRecovery.inlayHints.enabled": false,
+
   // Заголовки .h трактуем как C
   "files.associations": {
     "*.h": "c"
   },
 
-  // Скрываем из дерева файлов
+  // Скрываем из дерева файлов папку сборки
   "files.exclude": {
     "build": true
   },
@@ -28,11 +37,17 @@
   // Python: системный интерпретатор (не .venv)
   "python-envs.defaultEnvManager": "ms-python.python:system",
 
-  // Отключаем проверки типов Pylance (скрипты - вспомогательные)
+  // Отключаем проверки типов Pylance
   "python.analysis.typeCheckingMode": "off",
+
+  // Принудительное назначение форматировщика для языков C, C++ и JSON
+  "[c]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   }
 }
-// "python.analysis.typeCheckingMode": "off"
-// files.exclude скрывает папку из дерева файлов, но не отключает Pylance — он всё равно проанализирует файл, если он открыт.

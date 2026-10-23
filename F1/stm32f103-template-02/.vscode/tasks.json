@@ -212,6 +212,39 @@
       "options": {
         "cwd": "${workspaceFolder}"
       }
+    },
+    {
+      "label": "Convert Comments: Current File",
+      "detail": "Заменить абсолютно все /* */ на // (включая многострочные блоки)",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$p = '${file}'; $t = [IO.File]::ReadAllText($p); $m = [regex]::Matches($t, '(?s)/\\*.*?\\*/'); for($i=$m.Count-1; $i -ge 0; $i--){ $old=$m[$i].Value; $new = ($old -split '\\r?\\n' | %{ $l=$_; $l=$l -replace '^/\\*\\s*',''; $l=$l -replace '\\s*\\*/$',''; $l=$l -replace '^\\s*\\*?\\s*',''; if($l -eq ''){ '//' } else { '// ' + $l } }); $t=$t.Remove($m[$i].Index, $m[$i].Length).Insert($m[$i].Index, ($new -join [Environment]::NewLine)) }; [IO.File]::WriteAllText($p, $t)"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Convert Comments: Selection Only",
+      "detail": "Заменить /* */ на // ТОЛЬКО в выделенном тексте (скопирует результат в буфер)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "$text = @'\n${selectedText}\n'@; if ($text.Trim() -ne '') { $text -replace '/\\*\\s*(.*?)\\s*\\*/', '// $1' | clip; Write-Host 'Заменено! Нажмите Ctrl+V для вставки.' } else { Write-Host 'Ошибка: Выделите текст!' }"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
     }
   ]
 }

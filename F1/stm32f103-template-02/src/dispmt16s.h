@@ -27,9 +27,9 @@
 #define D70 GPIOB->BSRR |= GPIO_BSRR_BR9
 
 typedef enum {
-    LCD_CURSOR_OFF = 0,
-    LCD_CURSOR_NORMAL,
-    LCD_CURSOR_BLINK
+  LCD_CURSOR_OFF = 0,
+  LCD_CURSOR_NORMAL,
+  LCD_CURSOR_BLINK
 } lcd_cursor_t;
 
 void lcd_pins_init(void);

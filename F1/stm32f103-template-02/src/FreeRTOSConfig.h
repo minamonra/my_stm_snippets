@@ -16,14 +16,23 @@
 //  1. Планировщик
 // ==========================================================================
 
+#undef configUSE_PREEMPTION
+#undef configUSE_TIME_SLICING
+#undef configUSE_PORT_OPTIMISED_TASK_SELECTION
+#undef configUSE_TICKLESS_IDLE
+
 #define configUSE_PREEMPTION                    1
 #define configUSE_TIME_SLICING                  1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0  // Cortex-M3 не поддерживает
 #define configUSE_TICKLESS_IDLE                 0  // нужен portSUPPRESS_TICKS_AND_SLEEP
 
+#undef configMAX_PRIORITIES
+#undef configMINIMAL_STACK_SIZE
+#undef configMAX_TASK_NAME_LEN
+
 #define configCPU_CLOCK_HZ         (72000000UL)
 #define configTICK_RATE_HZ         ((TickType_t)1000U)
-#define configUSE_16_BIT_TICKS     0  // обязательно при 1000 Hz
+#define configUSE_16_BIT_TICKS     0      // обязательно при 1000 Hz
 #define configMAX_PRIORITIES       (16)
 #define configMINIMAL_STACK_SIZE   (128)  // 128 слов = 512 B
 #define configIDLE_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE)
@@ -43,6 +52,10 @@
 // 3. Синхронизация и IPC
 // ==========================================================================
 
+#undef configUSE_MUTEXES
+#undef configUSE_RECURSIVE_MUTEXES
+#undef configUSE_COUNTING_SEMAPHORES
+
 #define configUSE_MUTEXES                     1
 #define configUSE_RECURSIVE_MUTEXES           1
 #define configUSE_COUNTING_SEMAPHORES         1
@@ -53,6 +66,8 @@
 // ==========================================================================
 // 4. Группы событий, таймеры
 // ==========================================================================
+
+#undef configUSE_TIMERS
 
 #define configUSE_EVENT_GROUPS       1
 #define configUSE_TIMERS             1
@@ -115,8 +130,10 @@
 #define configLIBRARY_LOWEST_INTERRUPT_PRIORITY      15
 #define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY 5
 
-#define configKERNEL_INTERRUPT_PRIORITY      (configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
+#define configKERNEL_INTERRUPT_PRIORITY \
+  (configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY \
+  (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS))
 
 // ==========================================================================
 // 10. Связка с обработчиками Cortex-M3
@@ -132,12 +149,12 @@
 
 extern void vAssertHandler(const char* pcFile, unsigned long ulLine);
 
-#define configASSERT(x)                         \
-    do {                                        \
-        if ((x) == 0) {                         \
-            taskDISABLE_INTERRUPTS();           \
-            vAssertHandler(__FILE__, __LINE__); \
-        }                                       \
-    } while (0)
+#define configASSERT(x)                   \
+  do {                                    \
+    if ((x) == 0) {                       \
+      taskDISABLE_INTERRUPTS();           \
+      vAssertHandler(__FILE__, __LINE__); \
+    }                                     \
+  } while (0)
 
 #endif  // __FREERTOS_CONFIG_H__

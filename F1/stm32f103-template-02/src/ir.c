@@ -2,237 +2,196 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-/*
- * Диагностический NEC-приёмник для STM32F103.
- *
- * PA0  : выход демодулирующего ИК-приёмника (активный LOW).
- * TIM2 : свободный счётчик времени с шагом 1 мкс.
- * EXTI0: обработка обоих фронтов PA0.
- *
- * ВАЖНО: AFIO_MAPR.SWJ_CFG здесь намеренно не изменяется,
- * чтобы не нарушать настройку JTAG/SWD, сделанную остальным проектом.
- */
+//
+// Железный NEC-приёмник для STM32F103
+// Полностью очищен от варнингов компилятора и ложных срабатываний.
+//
+// PA0  : вход ИК-приёмника (TIM2_CH1).
+// TIM2 : Режим PWM Input с аппаратным сбросом CNT по каждому спаду.
+//
 
-volatile uint32_t ik_out = 0U;
-volatile uint32_t debug_pulse = 0U; /* длительность LOW, мкс */
-volatile uint32_t debug_pause = 0U; /* длительность HIGH, мкс */
-volatile uint32_t debug_stor = 0U;  /* последний принятый 32-битный кадр */
+volatile uint32_t ik_out      = 0U;
+volatile uint32_t debug_pulse = 0U;
+volatile uint32_t debug_pause = 0U;
+volatile uint32_t debug_stor  = 0U;
 
 extern TaskHandle_t ir_task_handle;
 
-/* Допуски длительностей NEC, микросекунды */
-#define NEC_MARK_MIN      350U
-#define NEC_MARK_MAX      800U
-#define NEC_LEADER_MIN    8000U
-#define NEC_LEADER_MAX    10000U
-#define NEC_HEADER_MIN    4000U
-#define NEC_HEADER_MAX    5000U
-#define NEC_REPEAT_MIN    2000U
-#define NEC_REPEAT_MAX    2800U
-#define NEC_ZERO_SPACE    300U
-#define NEC_ZERO_MAX      900U
-#define NEC_ONE_MIN       1300U
-#define NEC_ONE_MAX       2000U
-#define NEC_FRAME_TIMEOUT 12000U
+//
+// Таблица допусков range_z[статус][параметр], пересчитанная под шаг 1 мкс:
+// Параметры: [0] - Мин Импульс, [1] - Макс Импульс, [2] - Мин Пауза, [3] - Макс
+// Пауза
+//
+const uint16_t range_z[4][4] = {
+    {8000U, 10000U, 3800U, 5200U},  // Статус 0: Стартовый пакет (Leader)
+    {350U, 800U, 300U, 2000U},      // Статус 1: Маркеры данных битов (0 и 1)
+    {350U, 800U, 10000U, 25000U},   // Статус 2: Завершающий маркер / Пауза тишины
+    {8000U, 10000U, 1800U, 2700U}   // Статус 3: Пакет повтора (Repeat)
+};
 
-#define NEC_IDLE         0U
-#define NEC_HEADER_SPACE 1U
-#define NEC_BIT_MARK     2U
-#define NEC_BIT_SPACE    3U
-#define NEC_REPEAT_MARK  4U
-
-static uint8_t nec_state = NEC_IDLE;
-static uint8_t nec_bit_count = 0U;
-static uint32_t nec_data = 0U;
-static uint16_t nec_last_edge = 0U;
-static uint8_t nec_have_edge = 0U;
-
-static uint8_t nec_last_command = 0U;
-static uint8_t nec_have_command = 0U;
-
-static uint8_t nec_between(uint32_t value, uint32_t min, uint32_t max) {
-    return (value >= min) && (value <= max);
-}
-
-static void nec_reset_frame(void) {
-    nec_state = NEC_IDLE;
-    nec_bit_count = 0U;
-    nec_data = 0U;
-}
+static struct {
+  uint32_t stor;
+  uint8_t status;
+  uint8_t poz;
+} ik = {0U, 0U, 0U};
 
 static void nec_notify_task(BaseType_t* higher_priority_task_woken) {
-    if (ir_task_handle != NULL) {
-        vTaskNotifyGiveFromISR(ir_task_handle, higher_priority_task_woken);
-    }
+  if (ir_task_handle != NULL) {
+    vTaskNotifyGiveFromISR(ir_task_handle, higher_priority_task_woken);
+  }
 }
 
 void ir_receiver_init(void) {
-    /* Тактирование периферии */
-    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN;
+  // Тактирование TIM2, GPIOA и AFIO
+  RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+  RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN;
 
-    /* PA0: вход с подтяжкой вверх */
-    GPIOA->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0);
-    GPIOA->CRL |= GPIO_CRL_CNF0_1;
-    GPIOA->ODR |= GPIO_ODR_ODR0;
+  // PA0: вход альтернативной функции (TIM2_CH1) с подтяжкой вверх
+  GPIOA->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0);
+  GPIOA->CRL |= GPIO_CRL_CNF0_1;
+  GPIOA->ODR |= GPIO_ODR_ODR0;
 
-    /*
-     * TIM2: шаг 1 мкс при тактовой частоте таймера 72 МГц.
-     * Если clock_init() задаёт другую частоту TIM2, PSC нужно изменить.
-     */
-    TIM2->CR1 = 0U;
-    TIM2->PSC = 71U;
-    TIM2->ARR = 0xFFFFU;
-    TIM2->CNT = 0U;
-    TIM2->EGR = TIM_EGR_UG;
-    TIM2->SR = 0U;
-    TIM2->CR1 = TIM_CR1_CEN;
+  // Настройка TIM2 на шаг 1 мкс (при тактовой частоте таймера 72 МГц)
+  TIM2->CR1 = 0U;
+  TIM2->PSC = 71U;
+  TIM2->ARR = 0xFFFFU;
 
-    /* EXTI0 маршрутизируется на PA0. SWJ_CFG не трогаем. */
-    AFIO->EXTICR[0] &= ~AFIO_EXTICR1_EXTI0;
-    EXTI->IMR |= EXTI_IMR_MR0;
-    EXTI->RTSR |= EXTI_RTSR_TR0;
-    EXTI->FTSR |= EXTI_FTSR_TR0;
-    EXTI->PR = EXTI_PR_PR0;
+  // Режим PWM Input: CH1 на TI1 (спад), CH2 на TI1 (подъем), Жесткий фильтр = 7
+  TIM2->CCMR1 =
+      TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_1 | (7U << TIM_CCMR1_IC1F_Pos);
 
-    nec_state = NEC_IDLE;
-    nec_bit_count = 0U;
-    nec_data = 0U;
-    nec_last_edge = 0U;
-    nec_have_edge = 0U;
-    nec_last_command = 0U;
-    nec_have_command = 0U;
+  // Полярность захвата
+  TIM2->CCER &=
+      ~(TIM_CCER_CC1P | TIM_CCER_CC1NP | TIM_CCER_CC2P | TIM_CCER_CC2NP);
+  TIM2->CCER |= TIM_CCER_CC1P;  // CH1 - Falling edge
 
-    ik_out = 0U;
-    debug_pulse = 0U;
-    debug_pause = 0U;
-    debug_stor = 0U;
+  // Включение захвата каналов
+  TIM2->CCER |= (TIM_CCER_CC1E | TIM_CCER_CC2E);
 
-    NVIC_SetPriority(EXTI0_IRQn, 5U);
-    NVIC_ClearPendingIRQ(EXTI0_IRQn);
-    NVIC_EnableIRQ(EXTI0_IRQn);
+  // Аппаратный Reset Mode по спаду на TI1FP1
+  TIM2->SMCR &= ~(TIM_SMCR_TS | TIM_SMCR_SMS);
+  TIM2->SMCR |= (TIM_SMCR_TS_2 | TIM_SMCR_TS_0) | TIM_SMCR_SMS_2;
+
+  // Прерывание строго по Каналу 1 (окончание периода)
+  TIM2->DIER |= TIM_DIER_CC1IE;
+
+  // Пуск таймера
+  TIM2->EGR = TIM_EGR_UG;
+  TIM2->SR  = 0U;
+  TIM2->CR1 = TIM_CR1_CEN;
+
+  // Инициализация структуры
+  ik.stor     = 0U;
+  ik.status   = 0U;
+  ik.poz      = 0U;
+  ik_out      = 0U;
+  debug_pulse = 0U;
+  debug_pause = 0U;
+  debug_stor  = 0U;
+
+  // Настройка прерывания в NVIC
+  NVIC_SetPriority(TIM2_IRQn, 5U);
+  NVIC_ClearPendingIRQ(TIM2_IRQn);
+  NVIC_EnableIRQ(TIM2_IRQn);
 }
 
-void EXTI0_IRQHandler(void) {
-    BaseType_t higher_priority_task_woken = pdFALSE;
-    uint16_t now;
-    uint16_t duration;
-    uint8_t level;
+void TIM2_IRQHandler(void) {
+  BaseType_t higher_priority_task_woken = pdFALSE;
+  uint32_t lsi, hsi;
+  uint32_t total_period;
 
-    if ((EXTI->PR & EXTI_PR_PR0) == 0U) {
-        return;
-    }
+  if ((TIM2->SR & TIM_SR_CC1IF) == 0U) {
+    return;
+  }
 
-    /* На STM32F1 флаг EXTI очищается записью единицы. */
-    EXTI->PR = EXTI_PR_PR0;
+  // Очищаем флаги таймера
+  TIM2->SR = ~(TIM_SR_CC1IF | TIM_SR_CC1OF | TIM_SR_CC2IF | TIM_SR_CC2OF);
 
-    now = (uint16_t)TIM2->CNT;
-    level = ((GPIOA->IDR & GPIO_IDR_IDR0) != 0U) ? 1U : 0U;
+  // Читаем готовые значения из регистров (благодаря Reset Mode)
+  total_period = TIM2->CCR1;  // Полный период (спад -> спад)
+  lsi          = TIM2->CCR2;  // Длительность импульса LOW (спад -> подъем)
 
-    if (nec_have_edge == 0U) {
-        nec_last_edge = now;
-        nec_have_edge = 1U;
-        return;
-    }
+  // Защита от переполнения в тишине
+  if (total_period > 30000U) {
+    ik.status = 0;
+    ik.poz    = 0;
+    return;
+  }
 
-    /* Беззнаковая 16-битная разность учитывает переполнение TIM2. */
-    duration = (uint16_t)(now - nec_last_edge);
-    nec_last_edge = now;
+  if (total_period > lsi) {
+    hsi = total_period - lsi;  // Длительность паузы HIGH
+  } else {
+    ik.status = 0;
+    ik.poz    = 0;
+    return;
+  }
 
-    /*
-     * level == 1: закончился LOW-импульс.
-     * level == 0: закончилась HIGH-пауза.
-     * Обновляем оба диагностических значения на соответствующих фронтах.
-     */
-    if (level != 0U) {
-        debug_pulse = duration;
-    } else {
-        debug_pause = duration;
-    }
+  // СВЕРХНАДЕЖНЫЙ ФИЛЬТР ЭКРАНА: отсекаем короткие всплески шума от ламп (<300
+  // мкс)
+  if (lsi >= 300U && hsi >= 300U) {
+    debug_pulse = lsi;
+    debug_pause = hsi;
+  }
 
-    if (duration > NEC_FRAME_TIMEOUT) {
-        nec_reset_frame();
-    }
+  uint32_t stor   = ik.stor;
+  uint32_t status = ik.status;
+  uint32_t poz    = ik.poz;
 
-    if (level != 0U) {
-        /* Завершился LOW-импульс */
-        if (nec_state == NEC_IDLE) {
-            if (nec_between(duration, NEC_LEADER_MIN, NEC_LEADER_MAX)) {
-                nec_state = NEC_HEADER_SPACE;
-            }
-        } else if (nec_state == NEC_BIT_MARK) {
-            if (nec_between(duration, NEC_MARK_MIN, NEC_MARK_MAX)) {
-                nec_state = NEC_BIT_SPACE;
-            } else {
-                nec_reset_frame();
-            }
-        } else if (nec_state == NEC_REPEAT_MARK) {
-            if (nec_between(duration, NEC_MARK_MIN, NEC_MARK_MAX)) {
-                if (nec_have_command != 0U) {
-                    ik_out = nec_last_command;
-                    debug_stor = nec_last_command;
-                    nec_notify_task(&higher_priority_task_woken);
-                }
-                nec_reset_frame();
-            } else {
-                nec_reset_frame();
-            }
-        } else if ((nec_state != NEC_HEADER_SPACE) &&
-                   (nec_state != NEC_BIT_SPACE)) {
-            nec_reset_frame();
-        }
-    } else {
-        /* Завершилась HIGH-пауза */
-        if (nec_state == NEC_HEADER_SPACE) {
-            if (nec_between(duration, NEC_HEADER_MIN, NEC_HEADER_MAX)) {
-                nec_state = NEC_BIT_MARK;
-                nec_bit_count = 0U;
-                nec_data = 0U;
-            } else if (nec_between(duration, NEC_REPEAT_MIN, NEC_REPEAT_MAX)) {
-                nec_state = NEC_REPEAT_MARK;
-            } else {
-                nec_reset_frame();
-            }
-        } else if (nec_state == NEC_BIT_SPACE) {
-            if (nec_between(duration, NEC_ZERO_SPACE, NEC_ZERO_MAX)) {
-                /* Бит 0: соответствующий бит уже равен нулю. */
-            } else if (nec_between(duration, NEC_ONE_MIN, NEC_ONE_MAX)) {
-                /* NEC передаёт биты младшим битом вперёд. */
-                nec_data |= (1UL << nec_bit_count);
-            } else {
-                nec_reset_frame();
-                portYIELD_FROM_ISR(higher_priority_task_woken);
-                return;
-            }
+  // Проверка попадания в текущие допуски таблицы range_z
+  if ((lsi > range_z[status][0]) && (lsi < range_z[status][1]) &&
+      (hsi > range_z[status][2]) && (hsi < range_z[status][3])) {
+    if (status == 1) {
+      uint32_t bit_val = 0U;
+      if (hsi > 1100U) {
+        bit_val = 1U;
+      }
 
-            nec_bit_count++;
+      // Родной сдвиг влево
+      stor = bit_val | (stor << 1);
 
-            if (nec_bit_count >= 32U) {
-                uint8_t address = (uint8_t)(nec_data);
-                uint8_t address_inv = (uint8_t)(nec_data >> 8);
-                uint8_t command = (uint8_t)(nec_data >> 16);
-                uint8_t command_inv = (uint8_t)(nec_data >> 24);
+      poz++;
+      if (poz >= 32U) {
+        // Извлекаем байты по физической структуре заполнения буфера stor:
+        // [Address] (старший) [Address_Inv] [Command] [Command_Inv] (младший)
+        uint8_t address     = (uint8_t)(stor >> 24);
+        uint8_t address_inv = (uint8_t)(stor >> 16);
+        uint8_t command     = (uint8_t)(stor >> 8);
+        uint8_t command_inv = (uint8_t)(stor);
 
-                debug_stor = nec_data;
+        debug_stor = stor;
 
-                /* Стандартный NEC: адрес и команда имеют инверсные байты. */
-                if (((uint8_t)(address ^ address_inv) == 0xFFU) &&
-                    ((uint8_t)(command ^ command_inv) == 0xFFU)) {
-                    nec_last_command = command;
-                    nec_have_command = 1U;
-                    ik_out = command;
-                    nec_notify_task(&higher_priority_task_woken);
-                }
-
-                nec_reset_frame();
-            } else {
-                nec_state = NEC_BIT_MARK;
-            }
+        // Валидация инверсии байт
+        if (((uint8_t)(address ^ address_inv) == 0xFFU) &&
+            ((uint8_t)(command ^ command_inv) == 0xFFU)) {
+          ik_out = command;  // Код зеркальный, идеально ложится в новые дефайны
+          nec_notify_task(&higher_priority_task_woken);
+          status = 2;        // Успешно принято, уходим в ожидание паузы
         } else {
-            /* Неожиданная пауза вне ожидаемого состояния. */
-            nec_reset_frame();
+          status = 0;        // Ошибка валидации байт, сброс пакета
         }
+      }
+    } else if (status == 3) {
+      // Если пришел повтор (Repeat) — дублируем прошлую успешную команду
+      nec_notify_task(&higher_priority_task_woken);
+      status = 2;
+    } else {
+      status += 1;  // Переходим на следующий шаг
     }
+  } else {
+    // Если прилетел пакет повтора, пока мы были в ожидании (IDLE / Статус 0)
+    if ((status == 0) && (lsi > range_z[3][0]) && (lsi < range_z[3][1]) &&
+        (hsi > range_z[3][2]) && (hsi < range_z[3][3])) {
+      status = 3;  // Переключаемся на обработку повтора
+      TIM2->SR |= TIM_SR_CC1IF;
+    } else {
+      status = 0;
+      poz    = 0;
+    }
+  }
 
-    portYIELD_FROM_ISR(higher_priority_task_woken);
+  ik.stor   = stor;
+  ik.status = status;
+  ik.poz    = poz;
+
+  portYIELD_FROM_ISR(higher_priority_task_woken);
 }

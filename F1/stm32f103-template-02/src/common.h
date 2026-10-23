@@ -6,4 +6,4 @@
 void delay_nop(uint32_t count);
 void clock_init(void);
 
-#endif  // __COMMON_H__
+#endif // __COMMON_H__
